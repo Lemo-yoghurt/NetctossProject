@@ -19,6 +19,22 @@
         }
 
 
+        //显示业务账户详情
+        function getDetail() {
+            var sid = $(this).attr("num")
+            $.ajax({
+                url:"/saveService",
+                data:{
+                    serviceId:sid
+                },
+                success:function (res) {
+                   console.log(res)
+                   window.location.href="/detailService"
+                }
+            })
+        }
+
+
         //删除
         function deleteService() {
             var r = window.confirm("确定要删除此业务账号吗？删除后将不能恢复。");
@@ -27,33 +43,76 @@
                 $.ajax({
                     url: "/delService",
                     data: {
-                      serviceId:sid
+                        serviceId: sid
                     },
                     success: function (res) {
                         console.log(res)
                         $("#status" + res.data.serviceId).html("删除")
                         $("#operate_result_info").html("删除成功!!!")
                         $("#opreation" + res.data.serviceId).empty()
+                        document.getElementById("operate_result_info").style.display = "block";
+                        window.setTimeout(function () {
+                            document.getElementById("operate_result_info").style.display = "none";
+                        }, 1500)
                     }
                 })
-                document.getElementById("operate_result_info").style.display = "block";
+
             }
 
         }
+
         //开通或暂停
         function setState() {
-            var r = window.confirm("确定要开通此业务账号吗？");
-            if(r == true){
+            var sid = $(this).attr("id").slice(2)
+            if ($(this).val() == "暂停") {
+                var r = window.confirm("确定要暂停此账务账号吗？")
+                if (r == true) {
+                    $.ajax({
+                        url: "/pauseService",
+                        data: {
+                            serviceId: sid
+                        },
+                        success: function (result) {
+                            console.log(result)
+                            $("#status" + sid).html("暂停")
+                            $("#op" + sid).val("开启").attr("class", "btn_start")
+                            $("#operate_result_info").html("该账户已暂停")
+                            document.getElementById("operate_result_info").style.display = "block"
+                            window.setTimeout(function () {
+                                document.getElementById("operate_result_info").style.display = "none"
+                            }, 1000)
+                        }
+                    })
+                }
+            } else {
+                var r = window.confirm("确定要开通此账务账号吗？");
+                if (r == true) {
+                    $.ajax({
+                        url: "/openService",
+                        data: {
+                            serviceId: sid
+                        },
+                        success: function (res) {
+                            console.log(res)
+                            $("#status" + sid).html("开通")
+                            $("#op" + sid).val("暂停").attr("class", "btn_pause")
+                            $("#operate_result_info").html("该账户已重新开通")
 
+                            document.getElementById("operate_result_info").style.display = "block"
+                            window.setTimeout(function () {
+                                document.getElementById("operate_result_info").style.display = "none"
+                            }, 1000)
+                        }
+                    })
+                }
             }
-            document.getElementById("operate_result_info").style.display = "block";
         }
 
         //添加一条业务账号信息到表格
         function addNewTr(service) {
             //业务ID
             var td1 = $("<td></td>")
-            $("<a href='#' title='查看明细'>" + service.serviceId + "</a>").appendTo(td1)
+            $("<a href='#' title='查看明细'>" + service.serviceId + "</a>").attr("num",service.serviceId).click(getDetail).appendTo(td1)
             //账务账号ID
             var td2 = $("<td>" + service.accountId + "</td>")
             //身份证号
@@ -63,7 +122,7 @@
             //os账号
             var td5 = $("<td>" + service.osUsername + "</td>")
             //状态
-            var td6 = $("<td></td>").attr("id","status"+service.serviceId)
+            var td6 = $("<td></td>").attr("id", "status" + service.serviceId)
             if (service.status == "0") {
                 td6.html("暂停")
             }
@@ -77,13 +136,13 @@
             var td7 = $("<td>" + service.unixHost + "</td>")
             //资费
             var td8 = $("<td></td>")
-            $("<a class='summary' onmouseover='showDetail(true,this);' onmouseout='showDetail(false,this);'>"+service.cost.name+"</a>").appendTo(td8)
-            $("<div class='detail_info'>"+ service.cost.descr +"</div>").appendTo(td8)
+            $("<a class='summary' onmouseover='showDetail(true,this);' onmouseout='showDetail(false,this);'>" + service.cost.name + "</a>").appendTo(td8)
+            $("<div class='detail_info'>" + service.cost.descr + "</div>").appendTo(td8)
             //操作部分
             var td9 = $("<td></td>").attr("id", "opreation" + service.serviceId)
 
             //开启或者暂停
-            var pause = $("<input type='button'>")
+            var pause = $("<input type='button'>").attr("id", "op" + service.serviceId).click(setState)
             if (service.status == "0") {
                 pause.val("开启").attr("class", "btn_start")
             } else {
@@ -91,10 +150,10 @@
             }
 
             //修改
-            var modify = $("<input type='button' value='修改' class='btn_modify'>").click(modiService).attr("num",service.serviceId)
+            var modify = $("<input type='button' value='修改' class='btn_modify'>").click(modiService).attr("num", service.serviceId)
 
             //删除
-            var del = $("<input type='button' value='删除'  class='btn_delete'>").click(deleteService).attr("num",service.serviceId)
+            var del = $("<input type='button' value='删除'  class='btn_delete'>").click(deleteService).attr("num", service.serviceId)
 
             if (service.status != "2") {
                 td9.append(pause).append(modify).append(del)
@@ -197,7 +256,7 @@
                 }
             })
         }
-        
+
         //修改业务账号信息
         function modiService() {
             var sid = $(this).attr("num")
@@ -249,7 +308,6 @@
                 }
             })
         }
-
 
         function fuzzypage() {
             var pageNo = $(this).attr("no")

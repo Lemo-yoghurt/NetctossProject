@@ -45,6 +45,11 @@ public class ServiceServiceImpl implements ServiceService {
         serviceMapper.updateByPrimaryKeySelective(service);
     }
 
+    //删除暂停时间的修改方法
+    public void modiService(Service service) {
+        serviceMapper.updateService(service);
+    }
+
     //查询全部
     public  PageInfo<Service> queryServiceByPage(Integer pageNo,Integer pageSize){
         pageNo = pageNo == null ? 1 : pageNo;

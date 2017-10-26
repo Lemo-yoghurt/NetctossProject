@@ -87,4 +87,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
 
+    //通过身份号查找账务账户信息
+    public Account findAccountByIdCardNo(String idcardNo) {
+        Account account = accountMapper.findAccountByIdCardNo(idcardNo);
+        return account;
+    }
+
+
 }

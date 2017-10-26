@@ -25,4 +25,7 @@ public interface AccountMapper {
     
     //模糊查询
     List<Account> findByCondition(Account account);
+
+    //通过身份证号查询账户账号
+    Account findAccountByIdCardNo(String idcardNo);
 }

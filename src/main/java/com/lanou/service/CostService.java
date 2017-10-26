@@ -30,7 +30,9 @@ public interface CostService {
 
     //升序查询
     PageInfo<Cost> pageInfoSort(Integer pageNo,Integer pageSize,Integer flag);
-//    PageInfo<Cost> pageInfoByBaseDurationAsc(Integer pageNo,Integer pageSize);
+
+    //查找所有资费类型
+    List<Cost> findAllCostTypes();
 
 
 

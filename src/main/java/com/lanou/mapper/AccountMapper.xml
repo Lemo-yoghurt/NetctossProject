@@ -56,6 +56,12 @@
 
   </select>
 
+  <!--通过身份证号查询-->
+  <select id="findAccountByIdCardNo" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM account WHERE idcard_no=#{idcardNo,jdbcType=CHAR}
+  </select>
+
   <select id="findAll" resultMap="BaseResultMap">
     SELECT *
     FROM account

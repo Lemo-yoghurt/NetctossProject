@@ -27,6 +27,9 @@ public interface AccountService {
 
     void modiAccount(Account account);
 
+    //通过身份号查找账务账户信息
+    Account findAccountByIdCardNo(String idcardNo);
+
     //分页模糊查询
     PageInfo<Account> queryAccountByCondition(Integer pageNo, Integer pageSize,Account account);
 }

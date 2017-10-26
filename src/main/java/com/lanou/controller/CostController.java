@@ -11,6 +11,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.sql.Timestamp;
+import java.util.List;
 
 
 /**
@@ -89,18 +90,6 @@ public class CostController {
         return new AjaxResult(cost);
     }
 
-
-//    //显示资费信息
-//
-//    @ResponseBody
-//    @RequestMapping(value = "/getall")
-//    public PageInfo<Cost> getAllFee(@RequestParam("no") Integer pageNo,
-//                                    @RequestParam("size") Integer pageSize) {
-//
-//    PageInfo<Cost> pageInfo = costService.pageinfo(pageNo, pageSize);
-//        return pageInfo;
-//}
-
     //显示资费信息
     @ResponseBody
     @RequestMapping(value = "/getByPage")
@@ -113,18 +102,6 @@ public class CostController {
         System.out.println(pageInfo);
         return pageInfo;
     }
-
-    //显示排序后所选页码的资费信息
-//    @ResponseBody
-//    @RequestMapping(value = "/getByPageSort",method = RequestMethod.POST)
-//    public PageInfo<Cost> getFeeByPageSort(@RequestParam("no")Integer pageNo,
-//                                           @RequestParam("size") Integer pageSize){
-//
-//        PageInfo<Cost> pageInfo = costService
-//    }
-
-
-
 
     //添加一条资费信息
     @RequestMapping(value = "/addCost", method = RequestMethod.POST)
@@ -165,6 +142,15 @@ public class CostController {
 
         PageInfo<Cost> pageInfo = costService.pageInfoSort(pageNo,pageSize,flag);
         return pageInfo;
+    }
+
+    //查找所有资费类型
+    @ResponseBody
+    @RequestMapping(value = "/getAllCostType")
+    public AjaxResult getAllCostType(){
+        List<Cost> allCostTypes = costService.findAllCostTypes();
+
+        return new AjaxResult(allCostTypes);
     }
 
 

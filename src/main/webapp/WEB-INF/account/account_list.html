@@ -211,13 +211,13 @@
                         $("#status" + res.data.accountId).html("删除")
                         $("#operate_result_info").html("删除成功!!!")
                         $("#opreation" + res.data.accountId).empty()
+
+                        document.getElementById("operate_result_info").style.display = "block";
+                        window.setTimeout(function () {
+                            document.getElementById("operate_result_info").style.display = "none";
+                        }, 1500)
                     }
                 })
-
-                document.getElementById("operate_result_info").style.display = "block";
-                window.setTimeout(function () {
-                    document.getElementById("operate_result_info").style.display = "none";
-                }, 1500)
             }
         }
         //进入修改页面

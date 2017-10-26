@@ -107,7 +107,7 @@ public class ServiceController {
         service.setPauseDate(null);
         service.setStatus("1");
 
-        serviceService.updateService(service);
+        serviceService.modiService(service);
 
         return new AjaxResult(service);
 

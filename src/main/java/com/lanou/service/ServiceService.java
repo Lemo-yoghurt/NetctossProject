@@ -18,4 +18,7 @@ public interface ServiceService {
 
     //修改业务账号信息
     void updateService(Service service);
+
+    //删除暂停时间
+    void modiService(Service service);
 }

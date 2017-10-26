@@ -18,6 +18,8 @@ public interface ServiceMapper {
 
     int updateByPrimaryKey(Service record);
 
+    int updateService(Service service);
+
     //查询全部业务账号
     List<Service> findAllServices();
 

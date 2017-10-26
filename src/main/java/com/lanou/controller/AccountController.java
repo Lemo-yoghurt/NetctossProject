@@ -197,4 +197,15 @@ public class AccountController {
 
         return pageInfo;
     }
+
+    //通过身份号查找账务账户信息
+    @ResponseBody
+    @RequestMapping(value = "/getAccountByIdCardNo")
+    public AjaxResult findAccountByIdCardNo(@RequestParam("idcardNo") String idcardNo){
+        Account account = accountService.findAccountByIdCardNo(idcardNo);
+      if (account == null){
+         return new AjaxResult(0);
+      }
+      return new AjaxResult(account);
+    }
 }

@@ -171,6 +171,44 @@
     </set>
     where service_id = #{serviceId,jdbcType=INTEGER}
   </update>
+
+  <!--可以设置暂停时间为null-->
+  <update id="updateService" parameterType="com.lanou.bean.Service">
+
+
+    update service
+    <set>
+      <if test="accountId != null">
+        account_id = #{accountId,jdbcType=INTEGER},
+      </if>
+      <if test="unixHost != null">
+        unix_host = #{unixHost,jdbcType=VARCHAR},
+      </if>
+      <if test="osUsername != null">
+        os_username = #{osUsername,jdbcType=VARCHAR},
+      </if>
+      <if test="loginPasswd != null">
+        login_passwd = #{loginPasswd,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=CHAR},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+        pause_date = #{pauseDate,jdbcType=TIMESTAMP},
+      <if test="closeDate != null">
+        close_date = #{closeDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="costId != null">
+        cost_id = #{costId,jdbcType=INTEGER},
+      </if>
+    </set>
+    where service_id = #{serviceId,jdbcType=INTEGER}
+  </update>
+
+
+
   <update id="updateByPrimaryKey" parameterType="com.lanou.bean.Service">
     update service
     set account_id = #{accountId,jdbcType=INTEGER},

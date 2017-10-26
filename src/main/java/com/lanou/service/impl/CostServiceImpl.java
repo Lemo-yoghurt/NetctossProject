@@ -95,34 +95,12 @@ public class CostServiceImpl implements CostService {
         return pageInfo;
     }
 
+    public List<Cost> findAllCostTypes() {
 
-//    //通过基本时长升序查询
-//    public PageInfo<Cost> pageInfoByBaseDurationAsc(Integer pageNo, Integer pageSize) {
-//        //判断参数合法性
-//        pageNo = pageNo == null ? 1 : pageNo;
-//        pageSize = pageSize == null ? 5 : pageSize;
-//
-//        PageHelper.startPage(pageNo, pageSize);
-//
-//        List<Cost> costs = costMapper.findByByBaseDurationAsc();
-//
-//        PageInfo<Cost> pageInfo = new PageInfo<Cost>(costs);
-//
-//        return pageInfo;
-//    }
+        List<Cost> costTypes = costMapper.findAllCostTypes();
 
-//    //通过基本时长降序查询
-//    public PageInfo<Cost> pageInfoByBaseDurationDesc(Integer pageNo, Integer pageSize) {
-//        //判断参数合法性
-//        pageNo = pageNo == null ? 1 : pageNo;
-//        pageSize = pageSize == null ? 5 : pageSize;
-//
-//        PageHelper.startPage(pageNo, pageSize);
-//
-//        List<Cost> costs = costMapper.findByByBaseDurationDesc();
-//
-//        PageInfo<Cost> pageInfo = new PageInfo<Cost>(costs);
-//
-//        return pageInfo;
-//    }
+        return costTypes;
+    }
+
+
 }

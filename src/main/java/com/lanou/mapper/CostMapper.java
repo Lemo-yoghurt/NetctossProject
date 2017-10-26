@@ -26,4 +26,7 @@ public interface CostMapper {
     //降序查询
     List<Cost> findByBaseCostDesc();
     List<Cost> findByByBaseDurationDesc();
+
+    //查找所有资费类型
+    List<Cost> findAllCostTypes();
 }

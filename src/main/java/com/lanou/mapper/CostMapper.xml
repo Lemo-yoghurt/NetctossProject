@@ -24,6 +24,12 @@
     where cost_id = #{costId,jdbcType=INTEGER}
   </select>
 
+  <!--查找所有资费类型-->
+  <select id="findAllCostTypes" resultMap="BaseResultMap">
+    SELECT name
+    FROM cost
+  </select>
+
   <select id="findAll" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
     FROM cost
