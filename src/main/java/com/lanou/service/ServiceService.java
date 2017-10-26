@@ -15,4 +15,7 @@ public interface ServiceService {
 
     //通过id查找service
     Service findServiceById(Integer sid);
+
+    //修改业务账号信息
+    void updateService(Service service);
 }

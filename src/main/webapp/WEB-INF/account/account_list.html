@@ -106,8 +106,8 @@
                 }
                 for (var i = 0; i < pageInfo.navigatepageNums.length; i++) {
                     var pag = $("<a></a>").html(pageInfo.navigatepageNums[i]).attr("no", pageInfo.navigatepageNums[i]).attr("size", size).click(fuzzypage).appendTo($("#pages"))
-                    if ((i+1)==pageInfo.pageNum){
-                        pag.attr("class","current_page")
+                    if ((i + 1) == pageInfo.pageNum) {
+                        pag.attr("class", "current_page")
                     }
                 }
                 if (pageInfo.isLastPage) {
@@ -197,29 +197,29 @@
 
         //删除
         function deleteAccount() {
-            window.confirm("确定要删除此账务账号吗？\r\n删除后将不能恢复，且会删除其下属的所有业务账号。");
+            var r = window.confirm("确定要删除此账务账号吗？\r\n删除后将不能恢复，且会删除其下属的所有业务账号。");
 
             var aid = $(this).attr("num")
+            if (r == true) {
+                $.ajax({
+                    url: "/delAccount",
+                    data: {
+                        accountId: aid
+                    },
+                    success: function (res) {
+                        console.log(res)
+                        $("#status" + res.data.accountId).html("删除")
+                        $("#operate_result_info").html("删除成功!!!")
+                        $("#opreation" + res.data.accountId).empty()
+                    }
+                })
 
-            $.ajax({
-                url: "/delAccount",
-                data: {
-                    accountId: aid
-                },
-                success: function (res) {
-                    console.log(res)
-                    $("#status" + res.data.accountId).html("删除")
-                    $("#operate_result_info").html("删除成功!!!")
-                    $("#opreation" + res.data.accountId).empty()
-                }
-            })
-
-            document.getElementById("operate_result_info").style.display = "block";
-            window.setTimeout(function () {
-                document.getElementById("operate_result_info").style.display = "none";
-            }, 1500)
+                document.getElementById("operate_result_info").style.display = "block";
+                window.setTimeout(function () {
+                    document.getElementById("operate_result_info").style.display = "none";
+                }, 1500)
+            }
         }
-
         //进入修改页面
         function modiAccount() {
             var aid = $(this).attr("num")

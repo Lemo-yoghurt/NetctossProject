@@ -17,25 +17,35 @@
             else
                 detailDiv.style.display = "none";
         }
+
+
         //删除
-        function deleteAccount() {
+        function deleteService() {
             var r = window.confirm("确定要删除此业务账号吗？删除后将不能恢复。");
             if (r == true) {
+                var sid = $(this).attr("num")
                 $.ajax({
-                    url: "",
-                    data: {},
+                    url: "/delService",
+                    data: {
+                      serviceId:sid
+                    },
                     success: function (res) {
                         console.log(res)
-
+                        $("#status" + res.data.serviceId).html("删除")
+                        $("#operate_result_info").html("删除成功!!!")
+                        $("#opreation" + res.data.serviceId).empty()
                     }
-
                 })
+                document.getElementById("operate_result_info").style.display = "block";
             }
-            document.getElementById("operate_result_info").style.display = "block";
+
         }
         //开通或暂停
         function setState() {
             var r = window.confirm("确定要开通此业务账号吗？");
+            if(r == true){
+
+            }
             document.getElementById("operate_result_info").style.display = "block";
         }
 
@@ -53,7 +63,7 @@
             //os账号
             var td5 = $("<td>" + service.osUsername + "</td>")
             //状态
-            var td6 = $("<td></td>")
+            var td6 = $("<td></td>").attr("id","status"+service.serviceId)
             if (service.status == "0") {
                 td6.html("暂停")
             }
@@ -66,10 +76,11 @@
             //服务器IP
             var td7 = $("<td>" + service.unixHost + "</td>")
             //资费
-            var td8 = $("<td>" + service.cost.name + "</td>")
-
+            var td8 = $("<td></td>")
+            $("<a class='summary' onmouseover='showDetail(true,this);' onmouseout='showDetail(false,this);'>"+service.cost.name+"</a>").appendTo(td8)
+            $("<div class='detail_info'>"+ service.cost.descr +"</div>").appendTo(td8)
             //操作部分
-            var td9 = $("<td></td>")
+            var td9 = $("<td></td>").attr("id", "opreation" + service.serviceId)
 
             //开启或者暂停
             var pause = $("<input type='button'>")
@@ -83,7 +94,7 @@
             var modify = $("<input type='button' value='修改' class='btn_modify'>").click(modiService).attr("num",service.serviceId)
 
             //删除
-            var del = $("<input type='button' value='删除'  class='btn_delete'>").attr("num",service.serviceId)
+            var del = $("<input type='button' value='删除'  class='btn_delete'>").click(deleteService).attr("num",service.serviceId)
 
             if (service.status != "2") {
                 td9.append(pause).append(modify).append(del)
@@ -165,6 +176,7 @@
                 $("<a href='#'>尾页</a>").attr("no", pageInfo.lastPage).attr("size", size).click(fuzzypage).appendTo($("#pages"))
             }
         }
+
         //显示点击操作后的账号信息
         function page() {
             var pageNo = $(this).attr("no")

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 
 /**
  * Created by dllo on 17/10/25.
@@ -82,6 +83,46 @@ public class ServiceController {
 
         Service service = (Service) session.getAttribute("service");
         System.out.println(service);
+        return new AjaxResult(service);
+    }
+
+    //删除业务账号信息
+    @ResponseBody
+    @RequestMapping(value = "/delService")
+    public AjaxResult delService(@RequestParam("serviceId") Integer sid){
+        Service service = serviceService.findServiceById(sid);
+        service.setCloseDate(new Date());
+        service.setStatus("2");
+        serviceService.updateService(service);
+
+        return new AjaxResult(service);
+    }
+
+    //开启业务账户
+    @ResponseBody
+    @RequestMapping(value = "/openService")
+    public AjaxResult openService(@RequestParam("serviceId") Integer sid){
+        Service service = serviceService.findServiceById(sid);
+
+        service.setPauseDate(null);
+        service.setStatus("1");
+
+        serviceService.updateService(service);
+
+        return new AjaxResult(service);
+
+    }
+
+    //暂停业务账户
+    @ResponseBody
+    @RequestMapping(value = "/pauseService")
+    public AjaxResult pauseService(@RequestParam("serviceId") Integer sid){
+        Service service = serviceService.findServiceById(sid);
+        service.setPauseDate(new Date());
+        service.setStatus("0");
+
+        serviceService.updateService(service);
+
         return new AjaxResult(service);
     }
 }

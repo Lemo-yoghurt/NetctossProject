@@ -40,6 +40,11 @@ public class ServiceServiceImpl implements ServiceService {
         return service;
     }
 
+    //修改业务账户信息
+    public void updateService(Service service) {
+        serviceMapper.updateByPrimaryKeySelective(service);
+    }
+
     //查询全部
     public  PageInfo<Service> queryServiceByPage(Integer pageNo,Integer pageSize){
         pageNo = pageNo == null ? 1 : pageNo;
