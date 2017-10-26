@@ -2,6 +2,7 @@ package com.lanou.mapper;
 
 import com.github.pagehelper.PageInfo;
 import com.lanou.bean.Service;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -25,5 +26,14 @@ public interface ServiceMapper {
 
 
     //条件查询业务账号
-    List<Service> findServiceByCondition(Service service);
+    List<Service> findServiceByCondition(
+            @Param("status") String status,
+            @Param("osUsername") String osUsername,
+            @Param("unixHost") String unixHost,
+            @Param("idcardNo") String idcardNo
+
+                                         );
+
+    //通过os账号查询业务账号信息
+    Service findServiceByOsUsername(String name);
 }

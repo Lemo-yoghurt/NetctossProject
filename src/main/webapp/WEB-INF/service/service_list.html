@@ -283,19 +283,18 @@
             }
             if ($("#stas").val() == "删除") {
                 sta = "2"
-            }
-            if ($("#stas").val() == "全部") {
+            }if ($("#stas").val() == "全部"){
                 sta = null
             }
             $.ajax({
-                type: "post",
-                url: "/query",
+                url: "/queryService",
+                type:"post",
                 data: {
                     no: null,
                     size: null,
-                    idcardNo: $("#idCard").val(),
-                    realname: $("#name").val(),
-                    loginName: $("#loginname").val(),
+                    osUsername:$("#osname").val(),
+                    unixHost:$("#ip").val(),
+                    idcardNo:$("#idcard").val(),
                     status: sta
                 },
                 success: function (res) {
@@ -326,14 +325,14 @@
                 sta = null
             }
             $.ajax({
-                type: "post",
                 url: "/queryService",
+                type:"post",
                 data: {
                     no: pageNo,
                     size: pageSize,
-                    idcardNo: $("#idcard").val(),
-                    unixhost: $("#ip").val(),
-                    osusername: $("#osname").val(),
+                    osUsername:$("#osname").val(),
+                    unixHost:$("#ip").val(),
+                    idcardNo:$("#idcard").val(),
                     status: sta
                 },
                 success: function (res) {
@@ -378,9 +377,9 @@
     <form action="" method="">
         <!--查询-->
         <div class="search_add">
-            <div>OS 账号：<input id="osname" type="text" value="" class="width100 text_search"/></div>
-            <div>服务器 IP：<input id="ip" type="text" value="" class="width100 text_search"/></div>
-            <div>身份证：<input id="idcard" type="text" value="" class="text_search"/></div>
+            <div>OS 账号：<input id="osname" type="text" class="width100 text_search"/></div>
+            <div>服务器 IP：<input id="ip" type="text"  class="width100 text_search"/></div>
+            <div>身份证：<input id="idcard" type="text" class="text_search"/></div>
             <div>状态：
                 <select id="stas" class="select_search">
                     <option>全部</option>

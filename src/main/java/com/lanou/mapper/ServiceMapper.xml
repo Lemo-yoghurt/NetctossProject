@@ -31,6 +31,12 @@
     from service
     where service_id = #{serviceId,jdbcType=INTEGER}
   </select>
+
+  <select id="findServiceByOsUsername"  resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM service WHERE os_username=#{name}
+  </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from service
     where service_id = #{serviceId,jdbcType=INTEGER}
@@ -47,13 +53,16 @@
     SELECT <include refid="Base_Column_List"/>
     FROM service
     <where>
-      <if test="osUsername != null">
+      <if test="osUsername != ''">
         AND  os_username LIKE CONCAT('%',#{osUsername},'%')
       </if>
-      <if test="unixHost != null">
+      <if test="unixHost != ''">
         AND unix_host LIKE CONCAT('%',#{unixHost},'%')
       </if>
-      <if test="status != null">
+      <if test="idcardNo != ''">
+        AND account_id IN (SELECT account_id from account where idcard_no=#{idcardNo})
+      </if>
+      <if test="status != ''">
         AND status=#{status}
       </if>
     </where>

@@ -232,7 +232,7 @@
     <column id="85" parent="30" name="service_id">
       <mandatory>1</mandatory>
       <data-type>int(10)|0</data-type>
-      <default-expression>&apos;0&apos;</default-expression>
+      <sequence-identity>1</sequence-identity>
     </column>
     <column id="86" parent="30" name="account_id">
       <mandatory>1</mandatory>

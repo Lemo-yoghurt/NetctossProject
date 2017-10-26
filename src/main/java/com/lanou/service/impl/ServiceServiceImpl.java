@@ -20,14 +20,15 @@ public class ServiceServiceImpl implements ServiceService {
 
 
     //条件查询
-    public PageInfo<Service> queryServiceByCondition(Integer pageNo, Integer pageSize, Service service) {
+    public PageInfo<Service> queryServiceByCondition(Integer pageNo, Integer pageSize, String idcardNo,String osUsername,
+                                                     String unixHost,String status) {
 
         pageNo = pageNo == null ? 1 : pageNo;
         pageSize = pageSize == null ? 5 : pageSize;
 
         PageHelper.startPage(pageNo, pageSize);
 
-        List<Service> serviceList = serviceMapper.findServiceByCondition(service);
+        List<Service> serviceList = serviceMapper.findServiceByCondition(status,osUsername,unixHost,idcardNo);
 
         PageInfo<Service> pageInfo = new PageInfo<Service>(serviceList);
 
@@ -48,6 +49,20 @@ public class ServiceServiceImpl implements ServiceService {
     //删除暂停时间的修改方法
     public void modiService(Service service) {
         serviceMapper.updateService(service);
+    }
+
+    //通过os账号查询业务账号信息
+    public boolean findServiceByOsUsername(String name) {
+        Service service = serviceMapper.findServiceByOsUsername(name);
+        if (service == null ){
+            return true;
+        }
+        return false;
+    }
+
+    //添加一个业务账户
+    public void insertService(Service service) {
+        serviceMapper.insertSelective(service);
     }
 
     //查询全部

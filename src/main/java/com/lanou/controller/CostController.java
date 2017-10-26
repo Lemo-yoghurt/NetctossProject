@@ -96,12 +96,12 @@ public class CostController {
     public PageInfo<Cost> getFeeByPage(@RequestParam("no") Integer pageNo,
                                        @RequestParam("size") Integer pageSize) {
 
-        System.out.println(pageNo);
-        System.out.println(pageSize);
         PageInfo<Cost> pageInfo = costService.pageinfo(pageNo, pageSize);
         System.out.println(pageInfo);
         return pageInfo;
     }
+
+
 
     //添加一条资费信息
     @RequestMapping(value = "/addCost", method = RequestMethod.POST)
@@ -148,9 +148,9 @@ public class CostController {
     @ResponseBody
     @RequestMapping(value = "/getAllCostType")
     public AjaxResult getAllCostType(){
-        List<Cost> allCostTypes = costService.findAllCostTypes();
+        List<Cost> allCost = costService.findAll();
 
-        return new AjaxResult(allCostTypes);
+        return new AjaxResult(allCost);
     }
 
 

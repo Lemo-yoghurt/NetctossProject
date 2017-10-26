@@ -11,7 +11,9 @@ public interface ServiceService {
     //分页显示全部
     PageInfo<Service> queryServiceByPage(Integer pageNo,Integer pageSize);
 
-    PageInfo<Service> queryServiceByCondition(Integer pageNo,Integer pageSize,Service service);
+    PageInfo<Service> queryServiceByCondition(Integer pageNo,Integer pageSize,
+                                              String idcardNo,String osUsername,
+                                              String unixHost,String status);
 
     //通过id查找service
     Service findServiceById(Integer sid);
@@ -21,4 +23,10 @@ public interface ServiceService {
 
     //删除暂停时间
     void modiService(Service service);
+
+    //通过os账号查询业务账号信息
+    boolean findServiceByOsUsername(String name);
+
+    //添加一个业务账户
+    void insertService(Service service);
 }
