@@ -5,6 +5,7 @@
         <title></title>
         <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css" />
         <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css" />
+        <script src="../../js/jquery-3.2.1.js"></script>
         <script language="javascript" type="text/javascript">
             //保存成功的提示消息
             function showResult() {
@@ -18,6 +19,45 @@
                 else
                     divResult.style.display = "none";
             }
+
+            //添加复选按钮
+            function addCheckBox() {
+                var uu = $("<ul></ul>")
+                $.ajax({
+                    url: "/getAllCheckBox",
+                    success: function (re) {
+                        console.log(re)
+                        $.each(re.data, function (i, domEle) {
+                            var ll = $("<li></li>")
+                            var inp = $("<input type='checkbox'>").attr("num", domEle.moduleId)
+                            ll.append(inp).append(domEle.name).appendTo(uu)
+                        })
+                        uu.appendTo($(".input_info_scroll"))
+                    }
+                })
+            }
+
+            addCheckBox()
+
+            function addRole() {
+
+                var modules = ""
+                $("input[type='checkbox']:checked").each(function () {
+                    modules+=$(this).attr("num")+","
+                })
+                alert(modules)
+                $.ajax({
+                    type:"post",
+                    url:"/addRole",
+                    data:{
+                        name:$("#name").val(),
+                        modules:modules
+                    },
+                    success:function (res) {
+                      console.log(res)
+                    }
+                })
+            }
         </script>
     </head>
     <body>
@@ -30,12 +70,12 @@
         <!--导航区域开始-->
         <div id="navi">
             <ul id="menu">
-                <li><a href="../index.html" class="index_off"></a></li>
-                <li><a href="../role/role_list.html" class="role_on"></a></li>
+                <li><a href="/home" class="index_off"></a></li>
+                <li><a href="/role" class="role_on"></a></li>
                 <li><a href="../admin/admin_list.html" class="admin_off"></a></li>
-                <li><a href="../fee/fee_list.html" class="fee_off"></a></li>
-                <li><a href="../account/account_list.html" class="account_off"></a></li>
-                <li><a href="../service/service_list.html" class="service_off"></a></li>
+                <li><a href="/cost" class="fee_off"></a></li>
+                <li><a href="/account" class="account_off"></a></li>
+                <li><a href="/service" class="service_off"></a></li>
                 <li><a href="../bill/bill_list.html" class="bill_off"></a></li>
                 <li><a href="../report/report_list.html" class="report_off"></a></li>
                 <li><a href="../user/user_info.html" class="information_off"></a></li>
@@ -50,29 +90,29 @@
             <form action="" method="" class="main_form">
                 <div class="text_info clearfix"><span>角色名称：</span></div>
                 <div class="input_info">
-                    <input type="text" class="width200" />
+                    <input id="name" type="text" class="width200" />
                     <span class="required">*</span>
                     <div class="validate_msg_medium">不能为空，且为20长度的字母、数字和汉字的组合</div>
                 </div>                    
                 <div class="text_info clearfix"><span>设置权限：</span></div>
                 <div class="input_info_high">
-                    <div class="input_info_scroll">
-                        <ul>
-                            <li><input type="checkbox" />管理员管理</li>
-                            <li><input type="checkbox" />角色管理</li>
-                            <li><input type="checkbox" />资费管理</li>
-                            <li><input type="checkbox" />账务账号</li>
-                            <li><input type="checkbox" />业务账号</li>
-                            <li><input type="checkbox" />账单</li>
-                            <li><input type="checkbox" />报表</li>
-                        </ul>
+                    <div id="limit" class="input_info_scroll">
+                        <!--<ul>-->
+                            <!--<li><input name="test" type="checkbox" value="管理员管理"/>管理员管理</li>-->
+                            <!--<li><input name="test" type="checkbox" value="角色管理"/>角色管理</li>-->
+                            <!--<li><input name="test" type="checkbox" value="资费管理"/>资费管理</li>-->
+                            <!--<li><input name="test" type="checkbox" value="账务账号"/>账务账号</li>-->
+                            <!--<li><input name="test" type="checkbox" value="业务账号"/>业务账号</li>-->
+                            <!--<li><input name="test" type="checkbox" value="账单"/>账单</li>-->
+                            <!--<li><input name="test" type="checkbox" value="报表"/>报表</li>-->
+                        <!--</ul>-->
                     </div>
                     <span class="required">*</span>
                     <div class="validate_msg_tiny">至少选择一个权限</div>
                 </div>
                 <div class="button_info clearfix">
-                    <input type="button" value="保存" class="btn_save" onclick="showResult();" />
-                    <input type="button" value="取消" class="btn_save" />
+                    <input type="button" value="保存" class="btn_save" onclick="addRole()"/>
+                    <input type="button" value="取消" class="btn_save" onclick="window.location.href='/role'"/>
                 </div>
             </form>
         </div>
