@@ -49,4 +49,27 @@ public class RoleServiceImpl implements RoleService {
     public Role findRoleByRoleId(Integer roleId) {
         return roleMapper.selectByPrimaryKey(roleId);
     }
+
+    //通过条件查找角色
+    public boolean findByName(String name) {
+        Role role = roleMapper.findByName(name);
+        if (role == null){
+            return true;
+        }
+        return false;
+    }
+
+    public void delRole(Integer roleId) {
+        roleMapper.deleteByPrimaryKey(roleId);
+    }
+
+    //根据roleId删除中间表的信息
+    public void deleteRoleModule(Integer roleId) {
+        roleMapper.deleteRoleModule(roleId);
+    }
+
+    //修改角色信息
+    public void updateRole(Role role) {
+        roleMapper.updateByPrimaryKey(role);
+    }
 }

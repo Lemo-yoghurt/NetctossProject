@@ -8,9 +8,27 @@
     <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
     <script src="../../js/jquery-3.2.1.js"></script>
     <script language="javascript" type="text/javascript">
+
+        //删除
         function deleteRole() {
+            alert(1)
             var r = window.confirm("确定要删除此角色吗？");
-            document.getElementById("operate_result_info").style.display = "block";
+
+            if (r == true) {
+                var rid = $(this).attr("num")
+                $.ajax({
+                    url: "/delRole",
+                    data: {
+                        roleId: rid
+                    },
+                    success: function (res) {
+                        console.log(res)
+                        $("#tr" + res.data).remove()
+                        window.location.href = "/role"
+                    }
+                })
+            }
+//            document.getElementById("operate_result_info").style.display = "block";
         }
 
         //添加信息到表格
@@ -32,11 +50,11 @@
             //修改
             var modify = $("<input type='button' value='修改' class='btn_modify'>").click(modiRole).attr("num", role.roleId)
             //删除
-            var del = $("<input type='button' value='删除' class='btn_delete'>")
+            var del = $("<input type='button' value='删除' class='btn_delete'>").click(deleteRole).attr("num", role.roleId)
 
             td4.append(modify).append(del)
 
-            var trob = $("<tr></tr>").attr("class", "emp")
+            var trob = $("<tr></tr>").attr("class", "emp").attr("id", "tr" + role.roleId)
 
             trob.append(td1).append(td2).append(td3).append(td4)
 
@@ -116,7 +134,7 @@
             $.ajax({
                 url: "/modirole",
                 data: {
-                    roleId:rid
+                    roleId: rid
                 },
                 success: function (res) {
                     console.log(res)

@@ -63,13 +63,23 @@ public class RoleController {
                                  @RequestParam("modules") String mle) {
 
 
+        if (mle.equals("") || mle == null) {
+            return new AjaxResult(0);
+        }
+        if (!roleService.findByName(name)) {
+            return new AjaxResult(1);
+        }
         String[] str = mle.split(",");
+        Role role = new Role();
+        role.setName(name);
+
+        roleService.insertRole(role);
+
         for (String s : str) {
-            System.out.println(s);
+            roleService.insertIntoRoleModule(role.getRoleId(), Integer.parseInt(s));
         }
 
-
-        return new AjaxResult(1);
+        return new AjaxResult(2);
     }
 
     //进入修改角色页面
@@ -95,6 +105,43 @@ public class RoleController {
     }
 
     //保存修改后的角色信息
+    @ResponseBody
+    @RequestMapping(value = "/updateRole",method = RequestMethod.POST)
+    public AjaxResult updateRole(@RequestParam("roleId") Integer roleId,
+                                 @RequestParam("name") String name,
+                                 @RequestParam("modules") String mle) {
 
+        if (mle.equals("") || mle == null) {
+            return new AjaxResult(0);
+        }
+//        if (!roleService.findByName(name)) {
+//            return new AjaxResult(1);
+//        }
+        String[] str = mle.split(",");
+        Role role = new Role();
+        role.setRoleId(roleId);
+        role.setName(name);
 
+        //修改角色表
+        roleService.updateRole(role);
+
+        //根据角色删除中间数据
+        roleService.deleteRoleModule(roleId);
+
+        //重新插入中间表
+        for (String s : str) {
+            roleService.insertIntoRoleModule(roleId, Integer.parseInt(s));
+        }
+
+        return new AjaxResult(2);
+    }
+
+    //删除
+    @ResponseBody
+    @RequestMapping(value = "/delRole")
+    public AjaxResult delRole(@RequestParam("roleId") Integer roleId){
+      roleService.deleteRoleModule(roleId);
+      roleService.delRole(roleId);
+      return new AjaxResult(roleId);
+    }
 }

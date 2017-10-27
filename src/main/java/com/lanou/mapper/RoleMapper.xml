@@ -36,10 +36,22 @@
     from role_info
     where role_id = #{roleId,jdbcType=INTEGER}
   </select>
+
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from role_info
     where role_id = #{roleId,jdbcType=INTEGER}
   </delete>
+
+  <!--根据roleId删除中间表信息-->
+  <delete id="deleteRoleModule" parameterType="java.lang.Integer">
+  DELETE FROM role_module WHERE role_id=#{roleId}
+  </delete>
+
+  <select id="findByName" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM role_info WHERE name=#{name}
+  </select>
+
   <insert id="insert" parameterType="com.lanou.bean.Role">
     insert into role_info (role_id, name)
     values (#{roleId,jdbcType=INTEGER}, #{name,jdbcType=VARCHAR})

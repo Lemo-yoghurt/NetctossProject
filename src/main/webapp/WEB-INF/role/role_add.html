@@ -45,7 +45,6 @@
                 $("input[type='checkbox']:checked").each(function () {
                     modules+=$(this).attr("num")+","
                 })
-                alert(modules)
                 $.ajax({
                     type:"post",
                     url:"/addRole",
@@ -55,6 +54,15 @@
                     },
                     success:function (res) {
                       console.log(res)
+                        var result = res.data
+                        if (result == 0){
+                            $("#limit").html("至少选择一项")
+                        }if (result == 1){
+                            $("#save_result_info").html(" 保存失败，角色名称重复！")
+                            showResult()
+                        }if (result == 2){
+                            window.location.href="/role";
+                        }
                     }
                 })
             }
@@ -96,7 +104,7 @@
                 </div>                    
                 <div class="text_info clearfix"><span>设置权限：</span></div>
                 <div class="input_info_high">
-                    <div id="limit" class="input_info_scroll">
+                    <div  class="input_info_scroll">
                         <!--<ul>-->
                             <!--<li><input name="test" type="checkbox" value="管理员管理"/>管理员管理</li>-->
                             <!--<li><input name="test" type="checkbox" value="角色管理"/>角色管理</li>-->
@@ -108,7 +116,7 @@
                         <!--</ul>-->
                     </div>
                     <span class="required">*</span>
-                    <div class="validate_msg_tiny">至少选择一个权限</div>
+                    <div id="limit" class="validate_msg_tiny"></div>
                 </div>
                 <div class="button_info clearfix">
                     <input type="button" value="保存" class="btn_save" onclick="addRole()"/>

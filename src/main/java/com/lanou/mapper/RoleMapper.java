@@ -15,6 +15,7 @@ public interface RoleMapper {
 
     Role selectByPrimaryKey(Integer roleId);
 
+    //修改角色信息
     int updateByPrimaryKeySelective(Role record);
 
     int updateByPrimaryKey(Role record);
@@ -27,4 +28,10 @@ public interface RoleMapper {
     //往中间表添加数据
     void insertIntoRoleModule(@Param("roleId") Integer roleId,
                               @Param("moduleId") Integer moduleId);
+
+    //通过条件查找角色
+    Role findByName(String name);
+
+   //根据roleId删除中间表中的信息
+    void deleteRoleModule(Integer roleId);
 }
