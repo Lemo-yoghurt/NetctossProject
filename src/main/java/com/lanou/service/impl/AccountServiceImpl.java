@@ -57,6 +57,12 @@ public class AccountServiceImpl implements AccountService {
         return pageInfo;
     }
 
+
+    //通过推荐人id查找account
+    public Account findAccountByrecommenderId(Integer recommenderId) {
+        return accountMapper.findAccountByrecommenderId(recommenderId);
+    }
+
     public void addAccount(Account account) {
         accountMapper.insertSelective(account);
     }

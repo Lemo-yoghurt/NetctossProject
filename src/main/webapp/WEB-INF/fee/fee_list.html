@@ -40,17 +40,18 @@
         //显示全部资费信息
         function getAll() {
             $.ajax({
-                url: "/getByPage",
+                url: "/sort",
                 data: {
                     no: null,
-                    size: null
+                    size: null,
+                    flag:0
                 },
                 success: function (result) {
                     console.log(result)
                     $.each(result.list, function (i, domEle) {
                         addNewTr(domEle)
                     })
-                    pageInfo(result.pages)
+                    pageinfo(result,0)
                 }
             })
         }
@@ -58,97 +59,97 @@
         getAll()
 
         //添加页码
-        function pageInfo(pages) {
-            var prePage = $("<a href='#'>上一页</a>").click(pre)
-            var nextPage = $("<a href='#'>下一页</a>").click(next)
-            $("#pages").append(prePage)
-            var first = $("<a></a>").html(1).attr("id", "page" + 1).attr("number", 1).attr("class", "current_page").click(content)
-            $("#pages").append(first)
-            if (pages > 1){
-                for (var i = 2; i <= pages; i++) {
-                    var page = $("<a></a>").html(i).attr("id", "page" + i).attr("number", i).click(content)
-                    $("#pages").append(page)
-                }
-            }
-            $("#pages").append(nextPage)
-        }
+//        function pageInfo(pages) {
+//            var prePage = $("<a href='#'>上一页</a>").click(pre)
+//            var nextPage = $("<a href='#'>下一页</a>").click(next)
+//            $("#pages").append(prePage)
+//            var first = $("<a></a>").html(1).attr("id", "page" + 1).attr("number", 1).attr("class", "current_page").click(content)
+//            $("#pages").append(first)
+//            if (pages > 1){
+//                for (var i = 2; i <= pages; i++) {
+//                    var page = $("<a></a>").html(i).attr("id", "page" + i).attr("number", i).click(content)
+//                    $("#pages").append(page)
+//                }
+//            }
+//            $("#pages").append(nextPage)
+//        }
 
         //显示页码内容
-        function content() {
-            var url = "/getByPage"
-            var num = $(this).attr("number")
-            $("#pages a").removeClass("current_page")
-            $(this).attr("class", "current_page")
-            $.ajax({
-                url: url,
-                data: {
-                    no: num,
-                    size: null,
-                },
-                success: function (result) {
-                    console.log(result)
-                    $(".emp").remove()
-                    $.each(result.list, function (i, domEle) {
-                        addNewTr(domEle)
-                    })
-                }
-            })
-
-        }
+//        function content() {
+//            var url = "/getByPage"
+//            var num = $(this).attr("number")
+//            $("#pages a").removeClass("current_page")
+//            $(this).attr("class", "current_page")
+//            $.ajax({
+//                url: url,
+//                data: {
+//                    no: num,
+//                    size: null,
+//                },
+//                success: function (result) {
+//                    console.log(result)
+//                    $(".emp").remove()
+//                    $.each(result.list, function (i, domEle) {
+//                        addNewTr(domEle)
+//                    })
+//                }
+//            })
+//
+//        }
         //显示上一页
-        function pre() {
-            var num = $(".current_page").html() - 1;
-            if (parseInt(num) == 0) {
-                alert("已经是首页了")
-                num = $(".current_page").html()
-            }
-            $("#pages a").removeClass("current_page")
-            $("#page" + num).attr("class", "current_page")
-            $.ajax({
-                url: "/getByPage",
-                data: {
-                    no: num,
-                    size: null
-                },
-                success: function (result) {
-                    console.log(result)
-                    $(".emp").remove()
-                    $.each(result.list, function (i, domEle) {
-                        addNewTr(domEle)
-                    })
-                }
-            })
-        }
+//        function pre() {
+//            var num = $(".current_page").html() - 1;
+//            if (parseInt(num) == 0) {
+//                alert("已经是首页了")
+//                num = $(".current_page").html()
+//            }
+//            $("#pages a").removeClass("current_page")
+//            $("#page" + num).attr("class", "current_page")
+//            $.ajax({
+//                url: "/getByPage",
+//                data: {
+//                    no: num,
+//                    size: null
+//                },
+//                success: function (result) {
+//                    console.log(result)
+//                    $(".emp").remove()
+//                    $.each(result.list, function (i, domEle) {
+//                        addNewTr(domEle)
+//                    })
+//                }
+//            })
+//        }
 
-        //显示下一页
-        function next() {
-            var current = parseInt($(".current_page").html())
-            var num = current + 1
-            $.ajax({
-                url: "/getByPage",
-                data: {
-                    no: num,
-                    size: null
-                },
-                success: function (result) {
-                    console.log(result)
-                    if (result.list.length > 0) {
-                        $(".emp").remove()
-                        $.each(result.list, function (i, domEle) {
-                            $("#pages a").removeClass("current_page")
-                            $("#page" + num).attr("class", "current_page")
-                            addNewTr(domEle)
-                        })
-                    }
-                    if (result.list.length == 0) {
-                        $("#pages a").removeClass("current_page")
-                        $("#page" + current).attr("class", "current_page")
-                        alert("已经是最后一页了")
-                    }
-
-                }
-            })
-        }
+//        //显示下一页
+//        function next() {
+//            var current = parseInt($(".current_page").html())
+//            var num = current + 1
+//            $.ajax({
+//                url: "/getByPage",
+//                data: {
+//                    no: num,
+//                    size: null
+//                },
+//                success: function (result) {
+//                    console.log(result)
+//                    if (result.list.length > 0) {
+//                        $(".emp").remove()
+//                        $.each(result.list, function (i, domEle) {
+//                            $("#pages a").removeClass("current_page")
+//                            $("#page" + num).attr("class", "current_page")
+//                            addNewTr(domEle)
+//                        })
+//                    }
+//                    if (result.list.length == 0) {
+//                        $("#pages a").removeClass("current_page")
+//                        $("#page" + current).attr("class", "current_page")
+//                        alert("已经是最后一页了")
+//                    }
+//
+//                }
+//            })
+//        }
 
 
         //排序按钮的点击事件
@@ -169,7 +170,7 @@
                         $.each(result.list, function (i, domEle) {
                             addNewTr(domEle)
                         })
-
+                        pageinfo(result,1)
                     }
                 })
             }
@@ -189,6 +190,7 @@
                         $.each(result.list, function (i, domEle) {
                             addNewTr(domEle)
                         })
+                        pageinfo(result,2)
                     }
                 })
             }
@@ -211,6 +213,7 @@
                         $.each(result.list, function (i, domEle) {
                             addNewTr(domEle)
                         })
+                        pageinfo(result,3)
                     }
                 })
             }
@@ -230,10 +233,57 @@
                         $.each(result.list, function (i, domEle) {
                             addNewTr(domEle)
                         })
+                        pageinfo(result,4)
                     }
                 })
             }
         }
+
+        //分页
+        function pageinfo(pageInfo,flag) {
+            $("#pages").empty()
+            var size = 5
+            if (pageInfo.isFirstPage) {
+                $("<a href='#'>上一页</a>").attr("no", 1).attr("flag",flag).attr("size", size).click(page).appendTo($("#pages"))
+            } else {
+                $("<a href='#'>上一页</a>").attr("no", pageInfo.prePage).attr("flag",flag).attr("size", size).click(page).appendTo($("#pages"))
+            }
+
+            for (var i = 0; i < pageInfo.navigatepageNums.length; i++) {
+                var pa = $("<a></a>").html(pageInfo.navigatepageNums[i]).attr("flag",flag).attr("no", pageInfo.navigatepageNums[i]).attr("size", size).click(page).appendTo($("#pages"))
+                if ((i + 1) == pageInfo.pageNum) {
+                    pa.attr("class", "current_page")
+                }
+            }
+            if (pageInfo.isLastPage) {
+                $("<a href='#'>下一页</a>").attr("no", pageInfo.lastPage).attr("flag",flag).attr("size", size).click(page).appendTo($("#pages"))
+            } else {
+                $("<a href='#'>下一页</a>").attr("no", pageInfo.nextPage).attr("flag",flag).attr("size", size).click(page).appendTo($("#pages"))
+            }
+        }
+
+        function page(){
+            var flag = $(this).attr("flag")
+            var pageNo = $(this).attr("no")
+            var pageSize = $(this).attr("size")
+            $.ajax({
+                url: "/sort",
+                data: {
+                    no: pageNo,
+                    size: pageSize,
+                    flag:flag
+                },
+                success: function (result) {
+                    console.log(result)
+                    $(".emp").remove()
+                    $.each(result.list, function (i, domEle) {
+                        addNewTr(domEle)
+                    })
+                    pageinfo(result,flag)
+                }
+            })
+        }
+
         //显示资费详情
         function detail() {
             var id = $(this).attr("num")
@@ -291,6 +341,7 @@
             $("#info").html("启用成功")
             document.getElementById("operate_result_info").style.display = "block";
         }
+
         //修改
         function modifyFee() {
             var id = $(this).attr("id").slice(4)
@@ -341,7 +392,7 @@
     <ul id="menu">
         <li><a href="/home" class="index_off"></a></li>
         <li><a href="/role" class="role_off"></a></li>
-        <li><a href="../admin/admin_list.html" class="admin_off"></a></li>
+        <li><a href="/admin" class="admin_off"></a></li>
         <li><a href="/cost" class="fee_on"></a></li>
         <li><a href="/account" class="account_off"></a></li>
         <li><a href="/service" class="service_off"></a></li>

@@ -183,8 +183,6 @@
 
   <!--可以设置暂停时间为null-->
   <update id="updateService" parameterType="com.lanou.bean.Service">
-
-
     update service
     <set>
       <if test="accountId != null">

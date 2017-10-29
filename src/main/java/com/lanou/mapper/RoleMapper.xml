@@ -24,6 +24,12 @@
     (SELECT role_id FROM role_module WHERE module_id=#{moduleId})
   </select>
 
+  <select id="findRolesByAdminId" resultMap="roleMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM role_info WHERE role_id IN
+    (SELECT role_id FROM admin_role WHERE admin_id=#{adminId})
+  </select>
+
   <select id="findAllRoles" resultMap="BaseResultMap">
     SELECT <include refid="Base_Column_List"/>
     FROM role_info

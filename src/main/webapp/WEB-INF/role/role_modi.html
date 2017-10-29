@@ -11,7 +11,7 @@
         //保存成功的提示消息
         function showResult() {
             showResultDiv(true);
-            window.setTimeout("showResultDiv(false);", 3000);
+            window.setTimeout("showResultDiv(false);", 2000);
         }
         function showResultDiv(flag) {
             var divResult = document.getElementById("save_result_info");
@@ -52,7 +52,6 @@
                     $("#name").val(res.data.name).attr("numb", res.data.roleId)
 
                     $.each(res.data.modules, function (i, domEle) {
-                        console.log(res.data.modules)
                         $("#check" + domEle.moduleId).attr("checked", "true")
                     })
                 }

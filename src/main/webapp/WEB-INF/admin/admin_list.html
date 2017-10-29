@@ -1,291 +1,410 @@
-﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-        <title></title>
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css" />
-        <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css" /> 
-        <script language="javascript" type="text/javascript">
-            //显示角色详细信息
-            function showDetail(flag, a) {
-                var detailDiv = a.parentNode.getElementsByTagName("div")[0];
-                if (flag) {
-                    detailDiv.style.display = "block";
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title></title>
+    <link type="text/css" rel="stylesheet" media="all" href="../styles/global.css"/>
+    <link type="text/css" rel="stylesheet" media="all" href="../styles/global_color.css"/>
+    <script src="../../js/jquery-3.2.1.js"></script>
+    <script language="javascript" type="text/javascript">
+        //显示角色详细信息
+        function showDetail(flag, a) {
+            var detailDiv = a.parentNode.getElementsByTagName("div")[0];
+            if (flag) {
+                detailDiv.style.display = "block";
+            }
+            else
+                detailDiv.style.display = "none";
+        }
+        //重置密码
+        function resetPwd() {
+            alert("请至少选择一条数据！");
+            //document.getElementById("operate_result_info").style.display = "block";
+        }
+        //删除
+        function deleteAdmin() {
+            var r = window.confirm("确定要删除此管理员吗？");
+            if (r == true) {
+                var aid = $(this).attr("num")
+                $.ajax({
+                    url: "/delAdmin",
+                    data: {
+                        adminId: aid
+                    },
+                    success: function (res) {
+                        console.log(res)
+                        $("#tr" + res.data).remove()
+                        window.location.href = "/admin"
+                    }
+                })
+
+            }
+//            document.getElementById("operate_result_info").style.display = "block";
+        }
+
+        //进入修改界面
+        function modiAdmin() {
+            var aid = $(this).attr("num")
+            $.ajax({
+                url: "/updateAdmin",
+                data: {
+                    adminId: aid
+                },
+                success: function (res) {
+                    console.log(res)
+                    window.location.href = "/updateadmin"
                 }
-                else
-                    detailDiv.style.display = "none";
+            })
+        }
+
+        //全选
+        function selectAdmins(inputObj) {
+            var inputArray = document.getElementById("datalist").getElementsByTagName("input");
+            for (var i = 1; i < inputArray.length; i++) {
+                if (inputArray[i].type == "checkbox") {
+                    inputArray[i].checked = inputObj.checked;
+                }
             }
-            //重置密码
-            function resetPwd() {
-                alert("请至少选择一条数据！");
-                //document.getElementById("operate_result_info").style.display = "block";
+        }
+
+        //给表格添加信息
+        function addNewTr(admin) {
+            //复选按钮
+            var td1 = $("<td><input type='checkbox'/></td>")
+
+            //管理员id
+            var td2 = $("<td>" + admin.adminId + "</td>")
+
+            //管理员姓名
+            var td3 = $("<td>" + admin.name + "</td>")
+
+            //登录名
+            var td4 = $("<td>" + admin.adminCode + "</td>")
+
+            //电话
+            var td5 = $("<td>" + admin.telephone + "</td>")
+
+            //电子邮箱
+            var td6 = $("<td>" + admin.email + "</td>")
+
+            //授权日期
+            var td7 = $("<td>" + getLocalTime(admin.enrolldate) + "</td>")
+
+            //拥有角色
+            var td8 = $("<td></td>")
+
+            var arole = $("<a class='summary' onmouseover='showDetail(true,this);' onmouseout='showDetail(false,this);'></a>")
+
+            if (admin.roles.length > 1) {
+                arole.html(admin.roles[0].name + "...")
+            } else {
+                arole.html(admin.roles[0].name)
             }
+
+            arole.appendTo(td8)
+
+            var adiv = $("<div class='detail_info'></div>")
+
+            var str = ""
+
+            $.each(admin.roles, function (i, domEle) {
+                str += domEle.name + " "
+
+            })
+
+            adiv.html(str).appendTo(td8)
+
+            //操作部分
+            var td9 = $("<td class='td_modi'></td>")
+
+            //修改
+            var modify = $("<input type='button' value='修改' class='btn_modify'>").click(modiAdmin).attr("num", admin.adminId)
             //删除
-            function deleteAdmin() {
-                var r = window.confirm("确定要删除此管理员吗？");
-                document.getElementById("operate_result_info").style.display = "block";
-            }
-            //全选
-            function selectAdmins(inputObj) {
-                var inputArray = document.getElementById("datalist").getElementsByTagName("input");
-                for (var i = 1; i < inputArray.length; i++) {
-                    if (inputArray[i].type == "checkbox") {
-                        inputArray[i].checked = inputObj.checked;
+            var del = $("<input type='button' value='删除' class='btn_delete'>").click(deleteAdmin).attr("num", admin.adminId)
+
+            td9.append(modify).append(del)
+
+            var trob = $("<tr></tr>").attr("id", "tr" + admin.adminId).attr("class", "emp")
+
+            trob.append(td1).append(td2).append(td3).append(td4).append(td5).append(td6).append(td7).append(td8).append(td9)
+
+            $("#datalist").append(trob)
+        }
+
+        //得到所有模块
+        function getAllModules() {
+            $.ajax({
+                url: "/getAllCheckBox",
+                success: function (res) {
+                    console.log(res)
+                    $.each(res.data, function (i, domEle) {
+                        var op = $("<option>" + domEle.name + "</option>").attr("value", domEle.moduleId)
+                        $("#selModules").append(op)
+                    })
+                }
+            })
+        }
+
+        getAllModules()
+
+        //显示全部
+        function getAllAdmins() {
+            $.ajax({
+                url: "/getAllAdmins",
+                data: {
+                    no: null,
+                    size: null
+                },
+                success: function (res) {
+                    console.log(res)
+                    $.each(res.list, function (i, domEle) {
+                        addNewTr(domEle)
+                    })
+                    pageInfo(res,0)
+                }
+            })
+        }
+
+        getAllAdmins()
+
+        //添加页码
+        function pageInfo(pageInfo, flag) {
+            $("#pages").empty()
+            var size = 5
+            if (flag == 0) {
+                $("<a href='#'>首页</a>").attr("no", pageInfo.firstPage).attr("size", size).click(page).appendTo($("#pages"))
+                if (pageInfo.isFirstPage) {
+                    $("<a href='#'>上一页</a>").attr("no", 1).attr("size", size).click(page).appendTo($("#pages"))
+                } else {
+                    $("<a href='#'>上一页</a>").attr("no", pageInfo.prePage).attr("size", size).click(page).appendTo($("#pages"))
+                }
+
+                for (var i = 0; i < pageInfo.navigatepageNums.length; i++) {
+                    var pa = $("<a></a>").html(pageInfo.navigatepageNums[i]).attr("no", pageInfo.navigatepageNums[i]).attr("size", size).click(page).appendTo($("#pages"))
+                    if ((i + 1) == pageInfo.pageNum) {
+                        pa.attr("class", "current_page")
                     }
                 }
+                if (pageInfo.isLastPage) {
+                    $("<a href='#'>下一页</a>").attr("no", pageInfo.lastPage).attr("size", size).click(page).appendTo($("#pages"))
+                } else {
+                    $("<a href='#'>下一页</a>").attr("no", pageInfo.nextPage).attr("size", size).click(page).appendTo($("#pages"))
+                }
+                $("<a href='#'>尾页</a>").attr("no", pageInfo.lastPage).attr("size", size).click(page).appendTo($("#pages"))
+            } else {
+                $("<a href='#'>首页</a>").attr("no", pageInfo.firstPage).attr("size", size).click(fuzzypage).appendTo($("#pages"))
+                if (pageInfo.isFirstPage) {
+                    $("<a href='#'>上一页</a>").attr("no", 1).attr("size", size).click(fuzzypage).appendTo($("#pages"))
+                } else {
+                    $("<a href='#'>上一页</a>").attr("no", pageInfo.prePage).attr("size", size).click(fuzzypage).appendTo($("#pages"))
+                }
+                for (var i = 0; i < pageInfo.navigatepageNums.length; i++) {
+                    var pag = $("<a></a>").html(pageInfo.navigatepageNums[i]).attr("no", pageInfo.navigatepageNums[i]).attr("size", size).click(fuzzypage).appendTo($("#pages"))
+                    if ((i + 1) == pageInfo.pageNum) {
+                        pag.attr("class", "current_page")
+                    }
+                }
+                if (pageInfo.isLastPage) {
+                    $("<a href='#'>下一页</a>").attr("no", pageInfo.lastPage).attr("size", size).click(fuzzypage).appendTo($("#pages"))
+                } else {
+                    $("<a href='#'>下一页</a>").attr("no", pageInfo.nextPage).attr("size", size).click(fuzzypage).appendTo($("#pages"))
+                }
+                $("<a href='#'>尾页</a>").attr("no", pageInfo.lastPage).attr("size", size).click(fuzzypage).appendTo($("#pages"))
             }
-        </script>       
-    </head>
-    <body>
-        <!--Logo区域开始-->
-        <div id="header">
-            <img src="../images/logo.png" alt="logo" class="left"/>
-            <a href="#">[退出]</a>            
+        }
+        function page() {
+            var pageNo = $(this).attr("no")
+            var pageSize = $(this).attr("size")
+            $.ajax({
+                url: "/getAllAdmins",
+                data: {
+                    no: pageNo,
+                    size: pageSize
+                },
+                success: function (result) {
+                    console.log(result)
+                    $(".emp").remove()
+                    $.each(result.list, function (i, domEle) {
+                        addNewTr(domEle)
+                    })
+                    pageInfo(result,0)
+                }
+            })
+        }
+
+        //模糊查询
+        function fuzzyPage() {
+            $.ajax({
+                url: "/queryAdminByCondition",
+                data: {
+                    no: null,
+                    size: null,
+                    moduleId: $("#selModules option:selected").attr("value"),
+                    roleName: $("#roleName").val()
+                },
+                success: function (res) {
+                    console.log(res)
+                    $(".emp").remove()
+                    $.each(res.list, function (i, domEle) {
+                        addNewTr(domEle)
+                    })
+                    pageInfo(res,1)
+                }
+            })
+        }
+
+
+        function fuzzypage() {
+            var pageNo = $(this).attr("no")
+            var pageSize = $(this).attr("size")
+            $.ajax({
+                url: "/queryAdminByCondition",
+                data: {
+                    no: pageNo,
+                    size: pageSize,
+                    moduleId: $("#selModules option:selected").attr("value"),
+                    roleName: $("#roleName").val()
+                },
+                success: function (res) {
+                    console.log(res)
+                    $(".emp").remove()
+                    $.each(res.list, function (i, domEle) {
+                        addNewTr(domEle)
+                    })
+                    pageInfo(res,1)
+                }
+            })
+        }
+
+
+        // 将时间戳修改为日期类型
+        function getLocalTime(jsondate) {
+            if (jsondate !== null && jsondate.toString().length > 0) {
+                jsondate = "" + jsondate + "";//因为jsonDate是number型的indexOf会报错
+                if (jsondate.indexOf("+") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+                }
+                else if (jsondate.indexOf("-") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+                }
+                var date = new Date(parseInt(jsondate, 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+                var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+                var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+                return date.getFullYear() + "-" + month + "-" + currentDate + " " + hours + ":" + minutes + ":" + seconds;
+            }
+        }
+    </script>
+</head>
+<body>
+<!--Logo区域开始-->
+<div id="header">
+    <img src="../images/logo.png" alt="logo" class="left"/>
+    <a href="#">[退出]</a>
+</div>
+<!--Logo区域结束-->
+<!--导航区域开始-->
+<div id="navi">
+    <ul id="menu">
+        <li><a href="/home" class="index_off"></a></li>
+        <li><a href="/role" class="role_off"></a></li>
+        <li><a href="/admin" class="admin_on"></a></li>
+        <li><a href="/cost" class="fee_off"></a></li>
+        <li><a href="/account" class="account_off"></a></li>
+        <li><a href="/service" class="service_off"></a></li>
+        <li><a href="../bill/bill_list.html" class="bill_off"></a></li>
+        <li><a href="../report/report_list.html" class="report_off"></a></li>
+        <li><a href="../user/user_info.html" class="information_off"></a></li>
+        <li><a href="../user/user_modi_pwd.html" class="password_off"></a></li>
+    </ul>
+</div>
+<!--导航区域结束-->
+<!--主要区域开始-->
+<div id="main">
+    <form action="" method="">
+        <!--查询-->
+        <div class="search_add">
+            <div>
+                模块：
+                <select id="selModules" class="select_search">
+                    <option value="0">全部</option>
+                    <!--<option>角色管理</option>-->
+                     <!--<option>管理员管理</option>-->
+                    <!--<option>资费管理</option>-->
+                    <!--<option>账务账号</option>-->
+                    <!--<option>业务账号</option>-->
+                    <!--<option>账单管理</option>-->
+                    <!--<option>报表</option>-->
+                </select>
+            </div>
+            <div>角色：<input id="roleName" type="text" value="" class="text_search width200"/></div>
+            <div><input type="button" value="搜索" class="btn_search" onclick="fuzzyPage()"/></div>
+            <input type="button" value="密码重置" class="btn_add" onclick="resetPwd();"/>
+            <input type="button" value="增加" class="btn_add" onclick="location.href='/addadmin'"/>
         </div>
-        <!--Logo区域结束-->
-        <!--导航区域开始-->
-        <div id="navi">                        
-            <ul id="menu">
-                <li><a href="../index.html" class="index_off"></a></li>
-                <li><a href="../role/role_list.html" class="role_off"></a></li>
-                <li><a href="../admin/admin_list.html" class="admin_on"></a></li>
-                <li><a href="../fee/fee_list.html" class="fee_off"></a></li>
-                <li><a href="../account/account_list.html" class="account_off"></a></li>
-                <li><a href="../service/service_list.html" class="service_off"></a></li>
-                <li><a href="../bill/bill_list.html" class="bill_off"></a></li>
-                <li><a href="../report/report_list.html" class="report_off"></a></li>
-                <li><a href="../user/user_info.html" class="information_off"></a></li>
-                <li><a href="../user/user_modi_pwd.html" class="password_off"></a></li>
-            </ul>            
+        <!--删除和密码重置的操作提示-->
+        <div id="operate_result_info" class="operate_fail">
+            <img src="../images/close.png" onclick="this.parentNode.style.display='none';"/>
+            <span>删除失败！数据并发错误。</span><!--密码重置失败！数据并发错误。-->
         </div>
-        <!--导航区域结束-->
-        <!--主要区域开始-->
-        <div id="main">
-            <form action="" method="">
-                <!--查询-->
-                <div class="search_add">
-                    <div>
-                        模块：
-                        <select id="selModules" class="select_search">
-                            <option>全部</option>
-                            <option>角色管理</option>
-                            <option>管理员管理</option>
-                            <option>资费管理</option>
-                            <option>账务账号</option>
-                            <option>业务账号</option>
-                            <option>账单管理</option>
-                            <option>报表</option>
-                        </select>
-                    </div>
-                    <div>角色：<input type="text" value="" class="text_search width200" /></div>
-                    <div><input type="button" value="搜索" class="btn_search"/></div>
-                    <input type="button" value="密码重置" class="btn_add" onclick="resetPwd();" />
-                    <input type="button" value="增加" class="btn_add" onclick="location.href='admin_add.html';" />
-                </div>
-                <!--删除和密码重置的操作提示-->
-                <div id="operate_result_info" class="operate_fail">
-                    <img src="../images/close.png" onclick="this.parentNode.style.display='none';" />
-                    <span>删除失败！数据并发错误。</span><!--密码重置失败！数据并发错误。-->
-                </div> 
-                <!--数据区域：用表格展示数据-->     
-                <div id="data">            
-                    <table id="datalist">
-                        <tr>
-                            <th class="th_select_all">
-                                <input type="checkbox" onclick="selectAdmins(this);" />
-                                <span>全选</span>
-                            </th>
-                            <th>管理员ID</th>
-                            <th>姓名</th>
-                            <th>登录名</th>
-                            <th>电话</th>
-                            <th>电子邮件</th>
-                            <th>授权日期</th>
-                            <th class="width100">拥有角色</th>
-                            <th></th>
-                        </tr>                      
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>1</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>
-                                <a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">超级管理员...</a>
-                                <!--浮动的详细信息-->
-                                <div class="detail_info">
-                                    超级管理员，角色管理员，账单管理员，报表管理员，业务账号管理员，账务账号管理员，aa，bb
-                                </div>
-                            </td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" onclick="location.href='admin_modi.html';" />
-                                <input type="button" value="删除" class="btn_delete" onclick="deleteAdmin();" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>2</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>
-                                <a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">超级管理员...</a>
-                                <!--浮动的详细信息-->
-                                <div class="detail_info">
-                                    超级管理员，角色管理员
-                                </div>
-                            </td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" onclick="deleteAdmin();" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>3</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>
-                                <a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">超级管理员...</a>
-                                <!--浮动的详细信息-->
-                                <div class="detail_info">
-                                    超级管理员，角色管理员，账单管理员，报表管理员，业务账号管理员，账务账号管理员
-                                </div>
-                            </td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>4</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>
-                                <a class="summary"  onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">超级管理员</a>
-                                <!--浮动的详细信息-->
-                                <div class="detail_info">
-                                    超级管理员
-                                </div>
-                            </td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>5</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>超级管理员</td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>6</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>超级管理员</td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>7</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>超级管理员</td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>8</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>超级管理员</td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>9</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>超级管理员</td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" /></td>
-                            <td>10</td>
-                            <td>贾强</td>
-                            <td>admin</td>
-                            <td>13077332357</td>
-                            <td>jiaqiang123@qq.com.cn</td>
-                            <td>2011-31-12</td>
-                            <td>超级管理员</td>
-                            <td class="td_modi">
-                                <input type="button" value="修改" class="btn_modify" />
-                                <input type="button" value="删除" class="btn_delete" />
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <!--分页-->
-                <div id="pages">
-        	        <a href="#">上一页</a>
-                    <a href="#" class="current_page">1</a>
-                    <a href="#">2</a>
-                    <a href="#">3</a>
-                    <a href="#">4</a>
-                    <a href="#">5</a>
-                    <a href="#">下一页</a>
-                </div>                    
-            </form>
+        <!--数据区域：用表格展示数据-->
+        <div id="data">
+            <table id="datalist">
+                <tr>
+                    <th class="th_select_all">
+                        <input type="checkbox" onclick="selectAdmins(this);"/>
+                        <span>全选</span>
+                    </th>
+                    <th>管理员ID</th>
+                    <th>姓名</th>
+                    <th>登录名</th>
+                    <th>电话</th>
+                    <th>电子邮件</th>
+                    <th>授权日期</th>
+                    <th class="width100">拥有角色</th>
+                    <th></th>
+                </tr>
+                <!--<tr>-->
+                <!--<td><input type="checkbox"/></td>-->
+                <!--<td>1</td>-->
+                <!--<td>贾强</td>-->
+                <!--<td>admin</td>-->
+                <!--<td>13077332357</td>-->
+                <!--<td>jiaqiang123@qq.com.cn</td>-->
+                <!--<td>2011-31-12</td>-->
+                <!--<td>-->
+                <!--<a class="summary" onmouseover="showDetail(true,this);" onmouseout="showDetail(false,this);">超级管理员...</a>-->
+                <!--&lt;!&ndash;浮动的详细信息&ndash;&gt;-->
+                <!--<div class="detail_info">-->
+                <!--超级管理员，角色管理员，账单管理员，报表管理员，业务账号管理员，账务账号管理员，aa，bb-->
+                <!--</div>-->
+                <!--</td>-->
+                <!--<td class="td_modi">-->
+                <!--<input type="button" value="修改" class="btn_modify" onclick="location.href='admin_modi.html';"/>-->
+                <!--<input type="button" value="删除" class="btn_delete" onclick="deleteAdmin();"/>-->
+                <!--</td>-->
+                <!--</tr>-->
+            </table>
         </div>
-        <!--主要区域结束-->
-        <div id="footer">
-            <p>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</p>
-            <span>版权所有(C)云科技有限公司 </span>
+        <!--分页-->
+        <div id="pages">
+            <!--<a href="#">上一页</a>-->
+            <!--<a href="#" class="current_page">1</a>-->
+            <!--<a href="#">2</a>-->
+            <!--<a href="#">3</a>-->
+            <!--<a href="#">4</a>-->
+            <!--<a href="#">5</a>-->
+            <!--<a href="#">下一页</a>-->
         </div>
-    </body>
+    </form>
+</div>
+<!--主要区域结束-->
+<div id="footer">
+    <p>[源自北美的技术，最优秀的师资，最真实的企业环境，最适用的实战项目]</p>
+    <span>版权所有(C)云科技有限公司 </span>
+</div>
+</body>
 </html>

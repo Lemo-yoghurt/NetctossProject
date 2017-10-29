@@ -22,6 +22,8 @@ public interface RoleMapper {
 
     List<Role> findRolesByModuleId(Integer moduleId);
 
+    List<Role> findRolesByAdminId(Integer adminId);
+
     //查找所有角色
     List<Role> findAllRoles();
 

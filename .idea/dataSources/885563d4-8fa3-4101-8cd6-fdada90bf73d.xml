@@ -124,6 +124,7 @@
     <column id="56" parent="24" name="admin_id">
       <mandatory>1</mandatory>
       <data-type>int(8)|0</data-type>
+      <sequence-identity>1</sequence-identity>
     </column>
     <column id="57" parent="24" name="admin_code">
       <mandatory>1</mandatory>

@@ -22,15 +22,21 @@
                     $("#telephone").val(act.telephone)
                     if (act.status == "0") {
                         $("#status").val("暂停")
-                        $("#time").val(act.pauseDate)
+                        $("#time").val(getLocalTime(act.pauseDate))
                     }
                     if (act.status == "1") {
                         $("#status").val("开通")
-                        $("#time").val(act.createDate)
+                        $("#time").val(getLocalTime(act.createDate))
                     } if(act.status == "2") {
                         $("#status").val("删除")
-                        $("#time").val(act.closeDate)
+                        $("#time").val(getLocalTime(act.closeDate))
                     }
+
+                    $("#rid").val(act.recommenderId)
+
+                    getrecommenderIdCardNo(act.recommenderId)
+
+                    $("#birthdate").val(getLocalTime(act.birthdate))
 
                     $("#lastLoginTime").val(act.lastLoginTime)
 
@@ -60,6 +66,41 @@
 
         getDetail()
 
+
+        function getrecommenderIdCardNo(rid) {
+            $.ajax({
+                url:"/findrecommenderIdCardNo",
+                data:{
+                    recommenderId:rid
+                },
+                success:function (res) {
+                  console.log(res)
+                    var da = res.data
+                    $("#ridcardNo").val(da.idcardNo)
+                }
+            })
+        }
+
+        // 将时间戳修改为日期类型
+        function getLocalTime(jsondate) {
+            if (jsondate !== null && jsondate.toString().length > 0) {
+                jsondate = "" + jsondate + "";//因为jsonDate是number型的indexOf会报错
+                if (jsondate.indexOf("+") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("+"));
+                }
+                else if (jsondate.indexOf("-") > 0) {
+                    jsondate = jsondate.substring(0, jsondate.indexOf("-"));
+                }
+                var date = new Date(parseInt(jsondate, 10));
+                var month = date.getMonth() + 1 < 10 ? "0" + (date.getMonth() + 1) : date.getMonth() + 1;
+                var currentDate = date.getDate() < 10 ? "0" + date.getDate() : date.getDate();
+                var hours = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+                var minutes = date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+                var seconds = date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
+                return date.getFullYear() + "-" + month + "-" + currentDate + " " + hours + ":" + minutes + ":" + seconds;
+            }
+        }
+
     </script>
 </head>
 <body>
@@ -74,7 +115,7 @@
     <ul id="menu">
         <li><a href="/home" class="index_off"></a></li>
         <li><a href="/role" class="role_off"></a></li>
-        <li><a href="../admin/admin_list.html" class="admin_off"></a></li>
+        <li><a href="/admin" class="admin_off"></a></li>
         <li><a href="/cost" class="fee_off"></a></li>
         <li><a href="/account" class="account_on"></a></li>
         <li><a href="/service" class="service_off"></a></li>
@@ -106,9 +147,9 @@
             <input type="text" id="telephone" class="width200 readonly" readonly value=""/>
         </div>
         <div class="text_info clearfix"><span>推荐人账务账号ID：</span></div>
-        <div class="input_info"><input type="text" readonly class="readonly" value="5"/></div>
+        <div class="input_info"><input id="rid" type="text" readonly class="readonly" value=""/></div>
         <div class="text_info clearfix"><span>推荐人身份证号码：</span></div>
-        <div class="input_info"><input type="text" readonly class="readonly" value="230198765432123456"/></div>
+        <div class="input_info"><input id="ridcardNo" type="text" readonly class="readonly" value="230198765432123456"/></div>
         <div class="text_info clearfix"><span>状态：</span></div>
         <div class="input_info">
             <select id="status" disabled>
@@ -130,7 +171,7 @@
         <!--可选项数据-->
         <div class="text_info clearfix"><span>生日：</span></div>
         <div class="input_info">
-            <input id="birthdate" type="text" readonly class="readonly" value="1980/01/21，由身份证计算而来"/>
+            <input id="birthdate" type="text" readonly class="readonly" value=""/>
         </div>
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">

@@ -35,6 +35,11 @@
     where account_id = #{accountId,jdbcType=INTEGER}
   </select>
 
+  <select id="findAccountByrecommenderId" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/>
+    FROM account WHERE recommender_id=#{recommenderId}
+  </select>
+
   <!--条件查询-->
   <select id="findByCondition" resultMap="BaseResultMap" parameterType="com.lanou.bean.Account">
     SELECT <include refid="Base_Column_List"/>

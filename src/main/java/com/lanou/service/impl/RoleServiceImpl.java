@@ -19,6 +19,10 @@ public class RoleServiceImpl implements RoleService {
    @Resource
    private RoleMapper roleMapper;
 
+    //查找所有角色
+    public List<Role> findAllRoles() {
+        return roleMapper.findAllRoles();
+    }
 
     public PageInfo<Role> queryRolesByPgae(Integer pageNo, Integer pageSize) {
 

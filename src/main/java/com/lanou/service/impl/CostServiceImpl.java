@@ -80,7 +80,10 @@ public class CostServiceImpl implements CostService {
 
         PageHelper.startPage(pageNo, pageSize);
 
-        if (flag == 1){
+        if (flag == 0){
+            costs = costMapper.findAll();
+        }
+        else if (flag == 1){
             costs = costMapper.findByBaseCostAsc();
         } else if (flag == 2){
             costs = costMapper.findByBaseCostDesc();

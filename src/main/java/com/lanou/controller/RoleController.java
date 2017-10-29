@@ -56,6 +56,15 @@ public class RoleController {
         return pageInfo;
     }
 
+    //得到全部角色
+    @ResponseBody
+    @RequestMapping(value = "/getallRoles")
+    public AjaxResult getallRoles(){
+        List<Role> roles = roleService.findAllRoles();
+
+        return new AjaxResult(roles);
+    }
+
     //添加角色
     @ResponseBody
     @RequestMapping(value = "/addRole", method = RequestMethod.POST)

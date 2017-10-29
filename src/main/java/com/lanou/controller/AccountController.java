@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
@@ -61,12 +63,18 @@ public class AccountController {
     //添加一条账务账户信息
     @ResponseBody
     @RequestMapping(value = "/addaccount", method = RequestMethod.POST)
-    public AjaxResult saveAccount(Account account) {
+    public AjaxResult saveAccount(Account account) throws ParseException {
+
+        // 通过身份证设置出生日期
+        String idcardNo = account.getIdcardNo();
+        String birthDate = idcardNo.substring(6, 10)+"-"+idcardNo.substring(10, 12)+"-"+idcardNo.substring(12, 14)+" 00:00:00";
+        SimpleDateFormat sdf =new SimpleDateFormat( "yyyy-MM-dd HH:mm:ss" );
+        Date date = sdf.parse(birthDate);
+        account.setBirthdate(date);
 
         if (accountService.findByLoginName(account.getLoginName())) {
             account.setStatus("1");
             account.setCreateDate(new Date());
-            System.out.println(account);
 
             accountService.addAccount(account);
 
@@ -207,5 +215,16 @@ public class AccountController {
          return new AjaxResult(0);
       }
       return new AjaxResult(account);
+    }
+
+    //查找推荐人身份证号
+    @ResponseBody
+    @RequestMapping(value = "/findrecommenderIdCardNo")
+    public AjaxResult findrecommenderIdCardNo(@RequestParam("recommenderId") Integer recommenderId){
+        Account account = accountService.findByAccountId(recommenderId);
+
+        return new AjaxResult(account);
+
+
     }
 }

@@ -28,4 +28,7 @@ public interface AccountMapper {
 
     //通过身份证号查询账户账号
     Account findAccountByIdCardNo(String idcardNo);
+
+    //通过推荐人id查找account
+    Account findAccountByrecommenderId(Integer recommenderId);
 }

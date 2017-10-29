@@ -32,4 +32,7 @@ public interface AccountService {
 
     //分页模糊查询
     PageInfo<Account> queryAccountByCondition(Integer pageNo, Integer pageSize,Account account);
+
+    //通过推荐人id查找account
+    Account findAccountByrecommenderId(Integer recommenderId);
 }
