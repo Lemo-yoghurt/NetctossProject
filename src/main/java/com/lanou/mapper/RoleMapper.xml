@@ -11,9 +11,9 @@
   </resultMap>
 
   <resultMap id="roleMap" type="com.lanou.bean.Role">
-    <id column="role_id" jdbcType="INTEGER" property="roleId" />
-    <result column="name" jdbcType="VARCHAR" property="name" />
-  </resultMap>
+  <id column="role_id" jdbcType="INTEGER" property="roleId" />
+  <result column="name" jdbcType="VARCHAR" property="name" />
+</resultMap>
   <sql id="Base_Column_List">
     role_id, name
   </sql>

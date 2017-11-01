@@ -29,7 +29,7 @@
                     console.log(res)
                     $.each(res.data, function (i, domEle) {
                         var op = $("<option>" + domEle.name + "</option>")
-                        $("#costName").append(op).attr("value",domEle.costId)
+                        $("#costName").append(op).attr("value", domEle.costId)
                     })
                 }
             })
@@ -39,56 +39,129 @@
 
         //查询账务账号
         function search() {
-            var idcard = $("#idcardNo").val()
-            $.ajax({
-                url: "/getAccountByIdCardNo",
-                data: {
-                    idcardNo: idcard
-                },
-                success: function (res) {
-                    var info = res.data
-                    if (info == 0) {
-                        $("#searchresult").html("没有此身份证号，请重新录入。")
-                        $("#loginNmaeError").html("没有此账务账号，请重新录入。")
-                    } else {
-                        $("#idcardNo").attr("num",info.accountId)
-                        $("#loginName").val(info.loginName)
+            var reg = /(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+            var idcard = $("#idcardNo").val();
+            if (!(reg.test(idcard))) {
+                $("#errorTip1 div").html("输入正确的身份证号");
+            } else {
+                $("#errorTip1").hide();
+                $.ajax({
+                    url: "/getAccountByIdCardNo",
+                    data: {
+                        idcardNo: idcard
+                    },
+                    success: function (res) {
+                        var info = res.data
+                        if (info == 0) {
+                            $("#searchresult").html("没有此身份证号，请重新录入。")
+                        } else {
+                            $("#searchresult").html("身份证号正确,通过验证")
+                            $("#idcardNo").attr("num", info.accountId)
+                            $("#loginName").val(info.loginName)
+                        }
                     }
-                }
-            })
+                })
+            }
         }
 
         //添加业务账户
         function addService() {
+            var name = $("#osUsername").val();
+            var host = $("#unixHost").val()
+            var pwd = $("#loginPasswd").val();
+            var repsw = $("#password2").val()
+            if (name == "") {
+                $("#errorTip2 div").html("不能为空")
+            }
+            if (host == "") {
+                $("#errorTip3 div").html("不能为空")
+            }
+            if (pwd == "") {
+                $("#errorTip4 div").html("不能为空")
+            }
+            if (repsw == "") {
+                $("#error1").html("不能为空")
+            }
+            if (name != "" && host != "" && pwd != "" && repsw != "") {
 
-            $.ajax({
-                url: "/addservice",
-                data: {
-                    accountId: $("#idcardNo").attr("num"),
-                    unixHost:$("#unixHost").val(),
-                    costId:$("#costName").attr("value"),
-                    osUsername:$("#osUsername").val(),
-                    loginPasswd:$("#loginPasswd").val()
-                },
-                success: function (res) {
-                    console.log(res)
-                    if (res.data == 0){
-                      $("#osUsernameError").html("保存失败,os账号已经存在")
-                      showResult()
-                    }else{
-                        window.location.href="/service"
+                $.ajax({
+                    url: "/addservice",
+                    data: {
+                        accountId: $("#idcardNo").attr("num"),
+                        unixHost: $("#unixHost").val(),
+                        costId: $("#costName").attr("value"),
+                        osUsername: $("#osUsername").val(),
+                        loginPasswd: $("#loginPasswd").val()
+                    },
+                    success: function (res) {
+                        console.log(res)
+                        if (res.data == 0) {
+                            $("#osUsernameError").html("保存失败,os账号已经存在")
+                            showResult()
+                        } else {
+                            window.location.href = "/service"
+                        }
                     }
-                }
-            })
+                })
+            }
         }
-
 
         //自动查询账务账号
         function searchAccounts(txtObj) {
             //document.getElementById("a1").innerHTML = txtObj.value;
         }
 
-        //
+        //验证OS账号
+        function judgeLoginName() {
+            var reg = /^[a-zA-Z\d\u2E80-\u9FFF]{0,8}$/;
+            var name = $("#osUsername").val();
+            if (!(reg.test(name))) {
+                $("#errorTip2 div").html("8长度的字母数字和汉字的组合");
+            } else {
+                $("#errorTip2").hide();
+            }
+        }
+
+        //验证ip地址
+        function judgeUnixHost() {
+            var reg = /((?:(?:25[0-5]|2[0-4]\d|[01]?\d?\d)\.){3}(?:25[0-5]|2[0-4]\d|[01]?\d?\d))/
+            var host = $("#unixHost").val()
+            if (!reg.test(host)) {
+                $("#errorTip3 div").html("15 长度，必须符合IP的地址规范")
+            } else {
+                $("#errorTip3").hide()
+            }
+        }
+
+
+        //验证登录密码
+        function judgeLoginPasswd() {
+            var reg = /^[a-zA-Z\d\_\u2E80-\u9FFF]{0,30}$/;
+            var pwd = $("#loginPasswd").val();
+            if (!(reg.test(pwd))) {
+                $("#errorTip4 div").html("30长度以内的字母、数字和下划线的组合");
+            } else {
+                $("#errorTip4").hide();
+            }
+        }
+
+        //判断两次输入的密码是否相同
+        function comparePassword() {
+            var psw = $("#loginPasswd").val()
+            var repsw = $("#password2").val()
+            var reg = /^[a-zA-Z\d\_\u2E80-\u9FFF]{0,30}$/;
+            if (!(reg.test(repsw))) {
+                $("#error1").html("30长度以内的字母、数字和下划线的组合");
+            } else {
+                if (psw != repsw) {
+                    $("#error1").html("两次密码必须相同")
+                } else {
+                    $("#errorTip5").hide();
+                }
+            }
+        }
+
+
     </script>
 </head>
 <body>
@@ -124,8 +197,10 @@
         <div class="input_info">
             <input id="idcardNo" type="text" class="width180"/>
             <input type="button" value="搜索" onclick="search()" class="btn_search_large"/>
+            <span id="errorTip1">
             <span class="required">*</span>
             <div id="searchresult" class="validate_msg_short"></div>
+            </span>
         </div>
         <div class="text_info clearfix"><span>账务账号：</span></div>
         <div class="input_info">
@@ -144,27 +219,35 @@
         </div>
         <div class="text_info clearfix"><span>服务器 IP：</span></div>
         <div class="input_info">
-            <input id="unixHost" type="text"/>
+            <input id="unixHost" type="text" onchange="judgeUnixHost()"/>
+            <span id="errorTip3">
             <span class="required">*</span>
-            <div class="validate_msg_long">15 长度，符合IP的地址规范</div>
+            <div class="validate_msg_long"></div>
+            </span>
         </div>
         <div class="text_info clearfix"><span>登录 OS 账号：</span></div>
         <div class="input_info">
-            <input id="osUsername" type="text"/>
+            <input id="osUsername" type="text" onchange="judgeLoginName()"/>
+            <span id="errorTip2">
             <span class="required">*</span>
-            <div id="osUsernameError" class="validate_msg_long">8长度以内的字母、数字和下划线的组合</div>
+            <div id="osUsernameError" class="validate_msg_long"></div>
+            </span>
         </div>
         <div class="text_info clearfix"><span>密码：</span></div>
         <div class="input_info">
-            <input id="loginPasswd" type="password"/>
+            <input id="loginPasswd" type="password" onchange="judgeLoginPasswd()"/>
+            <span id="errorTip4">
             <span class="required">*</span>
-            <div class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
+            <div class="validate_msg_long"></div>
+            </span>
         </div>
         <div class="text_info clearfix"><span>重复密码：</span></div>
         <div class="input_info">
-            <input id="password2" type="password"/>
+            <input id="password2" type="password" onchange="comparePassword()"/>
+            <span id="errorTip5">
             <span class="required">*</span>
-            <div class="validate_msg_long">两次密码必须相同</div>
+            <div id="error1" class="validate_msg_long"></div>
+            </span>
         </div>
         <!--操作按钮-->
         <div class="button_info clearfix">

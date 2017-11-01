@@ -12,7 +12,6 @@
                 $.ajax({
                     url:"/detailInfo",
                     success:function (result) {
-
                         $("#costId").val(result.data.costId)
                         $("#costName").val(result.data.name)
                         $("#baseDuration").val( result.data.baseDuration)
@@ -23,7 +22,6 @@
                         $("#desc").val(result.data.descr)
 
                         if (result.data.costType == "包月"){
-                            alert(result.data.costType)
                             $("#monthly").attr("checked","true")
                         }
                         if (result.data.costType=="套餐"){
@@ -37,8 +35,7 @@
                             $("#status").val("暂停")
                         }
                         if (parseInt(result.data.status)== 1){
-                            alert(result.data.status)
-                            $("#status").val("开通")
+                           $("#status").val("开通")
                         }
 
                     }

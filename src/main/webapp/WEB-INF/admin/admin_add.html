@@ -42,43 +42,138 @@
 
         //保存信息
         function addAcount() {
-            var roles = []
-            $("input[type='checkbox']:checked").each(function () {
-                roles.push($(this).attr("num"))
-            })
-            if (roles.length == 0){
-                roles = null
+            var name = $("#name").val()
+            var adminCode = $("#adminCode").val()
+            var password = $("#password").val()
+            var telephone = $("#telephone").val()
+            var email = $("#email").val()
+            if (name == "") {
+                $("#div1").html("不能为空")
             }
-            $.ajax({
-                type: "post",
-                url: "/addAdmin",
-                traditional:true,
-                data: {
-                    name: $("#name").val(),
-                    adminCode:$("#adminCode").val(),
-                    password:$("#password").val(),
-                    telephone:$("#telephone").val(),
-                    email:$("#email").val(),
-                    roles: roles
-                },
-                success: function (res) {
-                    console.log(res)
-                    var result = res.data
-                    if (result == 0) {
-                        $("#limit").html("至少选择一项")
-                    }
-                    if (result == 1) {
-                        $("#save_result_info").html(" 保存失败，角色名称重复！")
-                        showResult()
-                    }
-                    if (result == 2) {
-                        window.location.href = "/admin";
-                    }
+            if (adminCode == "") {
+                $("#div2").html("不能为空")
+            }
+            if (password == "") {
+                $("#div3").html("不能为空")
+            }
+            if (telephone == "") {
+                $("#div5").html("不能为空")
+            }
+            if (email == "") {
+                $("#div6").html("不能为空")
+            }
+            if (name != "" && adminCode != "" && password != "" && telephone != "" && email != "") {
+                var roles = []
+                $("input[type='checkbox']:checked").each(function () {
+                    roles.push($(this).attr("num"))
+                })
+                if (roles.length == 0) {
+                    roles = null
                 }
-            })
+                $.ajax({
+                    type: "post",
+                    url: "/addAdmin",
+                    traditional: true,
+                    data: {
+                        name: $("#name").val(),
+                        adminCode: $("#adminCode").val(),
+                        password: $("#password").val(),
+                        telephone: $("#telephone").val(),
+                        email: $("#email").val(),
+                        roles: roles
+                    },
+                    success: function (res) {
+                        console.log(res)
+                        var result = res.data
+                        if (result == 0) {
+                            $("#limit").html("至少选择一项")
+                        }
+                        if (result == 1) {
+                            $("#save_result_info").html(" 保存失败，角色名称重复！")
+                            showResult()
+                        }
+                        if (result == 2) {
+                            window.location.href = "/admin";
+                        }
+                    }
+                })
+            }
+        }
+        //验证姓名
+        function judgeName() {
+            var reg = /^[a-zA-Z\d\u2E80-\u9FFF]{0,20}$/;
+            var name = $("#name").val();
+            reg.test(name);
+            if (!(reg.test(name))) {
+                $("#div1").attr("class","validate_msg_long error_msg").html("20长度的字母、数字和汉字的组合").show();
+            } else {
+                $("#div1").hide();
+            }
         }
 
 
+        //验证登录账号
+        function judgeLoginName() {
+            var reg = /^[a-zA-Z\d\u2E80-\u9FFF]{0,30}$/;
+            var name = $("#adminCode").val();
+            alert(reg.test(name))
+            if (!(reg.test(name))) {
+                $("#div2").html("30长度的字母数字和汉字的组合").show();
+            } else {
+                $("#div2").hide();
+            }
+        }
+
+        //验证登录密码
+        function judgeLoginPasswd() {
+            var reg = /^[a-zA-Z\d\_\u2E80-\u9FFF]{0,30}$/;
+            var pwd = $("#password").val();
+            if (!(reg.test(pwd))) {
+                $("#div3").html("30长度以内的字母、数字和下划线的组合").show();
+            } else {
+                $("#div3").hide();
+            }
+        }
+
+        //判断两次输入的密码是否相同
+        function comparePassword() {
+            var psw = $("#password").val()
+            var repsw = $("#rePassword").val()
+            var reg = /^[a-zA-Z\d\_\u2E80-\u9FFF]{0,30}$/;
+            if (!(reg.test(repsw))) {
+                $("#div4").html("30长度以内的字母、数字和下划线的组合").show();
+            } else {
+                if (psw != repsw) {
+                    $("#div4").html("两次密码必须相同").show()
+                } else {
+                    $("#div4").hide();
+                }
+            }
+        }
+
+
+        //验证电话号码
+        function judgeTelephone() {
+            var reg = /^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])\d{8}$/;
+            var tel = $("#telephone").val();
+            if (!(reg.test(tel))) {
+                $("#div5").html("请输入正确的电话号码").show();
+            } else {
+                $("#div5").hide();
+            }
+        }
+
+        //验证邮箱
+        function judgeEMail() {
+            var reg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+            var emails = $("#email").val()
+            if (!(reg.test(emails))) {
+                $("#div6").html("输入正确的邮箱").show();
+            } else {
+                $("#div6").hide();
+            }
+
+        }
     </script>
 </head>
 <body>
@@ -110,39 +205,39 @@
     <form action="" method="" class="main_form">
         <div class="text_info clearfix"><span>姓名：</span></div>
         <div class="input_info">
-            <input id="name" type="text"/>
+            <input id="name" type="text" onchange="judgeName()"/>
             <span class="required">*</span>
-            <div class="validate_msg_long">20长度以内的汉字、字母、数字的组合</div>
+            <div id="div1" class="validate_msg_long">20长度以内的汉字、字母、数字的组合</div>
         </div>
         <div class="text_info clearfix"><span>管理员账号：</span></div>
         <div class="input_info">
-            <input id="adminCode" type="text"/>
+            <input id="adminCode" type="text" onchange="judgeLoginName()"/>
             <span class="required">*</span>
-            <div class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
+            <div id="div2" class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
         </div>
         <div class="text_info clearfix"><span>密码：</span></div>
         <div class="input_info">
-            <input id="password" type="password"/>
+            <input id="password" type="password" onchange="judgeLoginPasswd()"/>
             <span class="required">*</span>
-            <div class="validate_msg_long error_msg">30长度以内的字母、数字和下划线的组合</div>
+            <div id="div3" class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
         </div>
         <div class="text_info clearfix"><span>重复密码：</span></div>
         <div class="input_info">
-            <input id="rePassword" type="password"/>
+            <input id="rePassword" type="password" onchange="comparePassword()"/>
             <span class="required">*</span>
-            <div class="validate_msg_long error_msg">两次密码必须相同</div>
+            <div id="div4" class="validate_msg_long"></div>
         </div>
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
-            <input id="telephone" type="text" class="width200"/>
+            <input id="telephone" type="text" class="width200" onchange="judgeTelephone()"/>
             <span class="required">*</span>
-            <div class="validate_msg_medium error_msg">正确的电话号码格式：手机或固话</div>
+            <div id="div5" class="validate_msg_medium">正确的电话号码格式：手机或固话</div>
         </div>
         <div class="text_info clearfix"><span>Email：</span></div>
         <div class="input_info">
-            <input id="email" type="text" class="width200"/>
+            <input id="email" type="text" class="width200" onchange="judgeEMail()"/>
             <span class="required">*</span>
-            <div class="validate_msg_medium error_msg">50长度以内，正确的 email 格式</div>
+            <div id="div6" class="validate_msg_medium ">50长度以内，正确的 email 格式</div>
         </div>
         <div class="text_info clearfix"><span>角色：</span></div>
         <div class="input_info_high">
@@ -158,7 +253,7 @@
                 <!--</ul>-->
             </div>
             <span class="required">*</span>
-            <div id="limit" class="validate_msg_tiny error_msg"></div>
+            <div id="limit" class="validate_msg_tiny ">至少选择一项</div>
         </div>
         <div class="button_info clearfix">
             <input type="button" value="保存" class="btn_save" onclick="addAcount()"/>

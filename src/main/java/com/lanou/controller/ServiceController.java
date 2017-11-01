@@ -1,6 +1,8 @@
 package com.lanou.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.lanou.activemq.consumer.ConsumerService;
+import com.lanou.activemq.producer.ProducerService;
 import com.lanou.bean.Service;
 import com.lanou.service.ServiceService;
 import com.lanou.utils.AjaxResult;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Method;
 import java.util.Date;
 
 /**
@@ -23,6 +26,12 @@ public class ServiceController {
 
     @Resource
     private ServiceService serviceService;
+
+    @Resource
+    private ProducerService producerService;
+
+    @Resource
+    private ConsumerService consumerService;
 
     //进入业务账号列表页面
     @RequestMapping(value = "/service")
@@ -54,11 +63,8 @@ public class ServiceController {
     public PageInfo<Service> findAllService(@RequestParam("no") Integer pageNo,
                                             @RequestParam("size") Integer pageSize) {
 
-        System.out.println(pageNo);
-        System.out.println(pageSize);
         PageInfo<Service> pageInfo = serviceService.queryServiceByPage(pageNo, pageSize);
 
-        System.out.println(pageInfo);
         return pageInfo;
     }
 
@@ -99,6 +105,16 @@ public class ServiceController {
         return new AjaxResult(service);
     }
 
+    //保存修改后的信息
+    @ResponseBody
+    @RequestMapping(value = "/modiService")
+    public AjaxResult modiService(Service service){
+
+        serviceService.updateService(service);
+        return new AjaxResult(service);
+
+    }
+
     //开启业务账户
     @ResponseBody
     @RequestMapping(value = "/openService")
@@ -132,7 +148,7 @@ public class ServiceController {
     @RequestMapping(value = "/addservice")
     public AjaxResult addservice(Service service) {
         boolean result = serviceService.findServiceByOsUsername(service.getOsUsername());
-
+        System.out.println(result);
         if (result) {
             service.setCreateDate(new Date());
             service.setStatus("1");
@@ -152,12 +168,6 @@ public class ServiceController {
                                                      @RequestParam(value = "unixHost",required = false) String unixHost,
                                                      @RequestParam(value = "status",required = false) String status) {
 
-
-
-        System.out.println(idcardNo);
-        System.out.println(osUsername);
-        System.out.println(unixHost);
-        System.out.println(status);
         PageInfo<Service> pageInfo = serviceService.queryServiceByCondition(pageNo, pageSize,idcardNo,osUsername,unixHost,status);
 
         System.out.println(pageInfo);

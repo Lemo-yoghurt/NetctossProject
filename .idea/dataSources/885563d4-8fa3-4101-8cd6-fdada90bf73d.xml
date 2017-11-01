@@ -190,7 +190,7 @@
       <data-type>datetime|0</data-type>
     </column>
     <column id="75" parent="26" name="cost_type">
-      <data-type>char(5)|0</data-type>
+      <data-type>char(100)|0</data-type>
     </column>
     <key id="76" parent="26" name="PRIMARY">
       <columns>cost_id</columns>

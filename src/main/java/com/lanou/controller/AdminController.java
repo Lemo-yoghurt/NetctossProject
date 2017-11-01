@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import sun.nio.cs.UnicodeEncoder;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Date;
 
 /**
@@ -168,17 +171,16 @@ public class AdminController {
 
     //高级查询
     @ResponseBody
-    @RequestMapping(value = "/queryAdminByCondition")
+    @RequestMapping(value = "/queryAdminByCondition",method = RequestMethod.POST)
     public PageInfo<Admin> queryAdminByCondition(@RequestParam("no") Integer pageNo,
                                                  @RequestParam("size") Integer pageSize,
                                                  @RequestParam("moduleId") Integer moduleId,
                                                  @RequestParam("roleName") String roleName) {
-
         if (moduleId == 0){
             moduleId = null;
         }
 
-        PageInfo<Admin> pageInfo = adminService.queryAdminByCondition(pageNo, pageSize, moduleId, roleName);
+        PageInfo<Admin> pageInfo = adminService.queryAdminByCondition(pageNo, pageSize, moduleId,roleName);
 
         return pageInfo;
     }

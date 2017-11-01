@@ -75,6 +75,9 @@ public class RoleController {
         if (mle.equals("") || mle == null) {
             return new AjaxResult(0);
         }
+        if(name.equals("") || name == null){
+            return new AjaxResult(3);
+        }
         if (!roleService.findByName(name)) {
             return new AjaxResult(1);
         }

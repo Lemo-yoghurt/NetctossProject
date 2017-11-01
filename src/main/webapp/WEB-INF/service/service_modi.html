@@ -21,20 +21,57 @@
                 divResult.style.display = "none";
         }
 
-        //显示要修改的信息
-        function serviceDetail() {
+        //查找所有资费
+        function getAllCost() {
             $.ajax({
-                url: "/getServiceDetail",
+                url: "/getAllCostType",
                 success: function (res) {
                     console.log(res)
-                    $("#serviceId").val(res.data.serviceId)
-                    $("#osUsername").val(res.data.osUsername)
-                    $("#unixHost").val(res.data.unixHost)
-                    $("#costType").val(res.data.cost.costType)
+                    $.each(res.data, function (i, domEle) {
+                        var op = $("<option>" + domEle.name + "</option>").attr("id", "sel" + domEle.costId)
+                        $("#costType").append(op)
+                    })
                 }
             })
         }
-        serviceDetail()
+
+        getAllCost()
+
+        //显示要修改的信息
+        $(document).ready(function () {
+            function serviceDetail() {
+
+                $.ajax({
+                    url: "/getServiceDetail",
+                    success: function (res) {
+                        $("#serviceId").val(res.data.serviceId)
+                        $("#osUsername").val(res.data.osUsername)
+                        $("#unixHost").val(res.data.unixHost)
+                        $("#sel" + res.data.costId).attr("selected", "selected")
+                    }
+                })
+            }
+
+            serviceDetail()
+        })
+
+        function modifyService() {
+            $.ajax({
+                url: "/modiService",
+                type: "post",
+                data: {
+                    serviceId: $("#serviceId").val(),
+                    osUsername: $("#osUsername").val(),
+                    unixHost: $("#unixHost").val(),
+                    costId: $("option:selected").attr("id").slice(3)
+                },
+                success: function (res) {
+                    console.log(res)
+                    window.location.href = "/service"
+                }
+            })
+        }
+
     </script>
 </head>
 <body>
@@ -81,17 +118,18 @@
         <div class="text_info clearfix"><span>资费类型：</span></div>
         <div class="input_info">
             <select id="costType" class="width150">
-                <option>包 20 小时</option>
-                <option>包 40 小时</option>
-                <option>包 60 小时</option>
-                <option>包月</option>
+                <option>资费列表</option>
+                <!--<option>包 20 小时</option>-->
+                <!--<option>包 40 小时</option>-->
+                <!--<option>包 60 小时</option>-->
+                <!--<option>包月</option>-->
             </select>
             <div class="validate_msg_long">请修改资费类型，或者取消修改操作。</div>
         </div>
         <!--操作按钮-->
         <div class="button_info clearfix">
-            <input type="button" value="保存" class="btn_save"/>
-            <input type="button" value="取消" class="btn_save"/>
+            <input type="button" value="保存" class="btn_save" onclick="modifyService()"/>
+            <input type="button" value="取消" class="btn_save" onclick="window.location.href='/service'"/>
         </div>
 
 

@@ -151,6 +151,7 @@
         //显示全部
         function getAllAdmins() {
             $.ajax({
+                type:"post",
                 url: "/getAllAdmins",
                 data: {
                     no: null,
@@ -217,6 +218,7 @@
             var pageNo = $(this).attr("no")
             var pageSize = $(this).attr("size")
             $.ajax({
+                type:"post",
                 url: "/getAllAdmins",
                 data: {
                     no: pageNo,
@@ -236,6 +238,7 @@
         //模糊查询
         function fuzzyPage() {
             $.ajax({
+                type: "post",
                 url: "/queryAdminByCondition",
                 data: {
                     no: null,
@@ -259,6 +262,7 @@
             var pageNo = $(this).attr("no")
             var pageSize = $(this).attr("size")
             $.ajax({
+                type: "post",
                 url: "/queryAdminByCondition",
                 data: {
                     no: pageNo,

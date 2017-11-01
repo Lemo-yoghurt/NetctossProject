@@ -36,52 +36,210 @@
 
         //添加一条账户信息
         function addAccount() {
-            var gender = null
-            if ($("#female")[0].checked){
-                gender = $("#female").val()
-            }else {
-                gender= $("#male").val()
+            var name = $("#realName").val();
+            var idcard = $("#idcardNo").val();
+            var lname = $("#loginName").val();
+            var pwd = $("#loginPasswd").val();
+            var repsw = $("#repeatPasswd").val()
+            var tel = $("#telephone").val();
+            if (name == "") {
+                $("#errorTip1 div").html("不能为空")
             }
-            $.ajax({
-                type:"post",
-                url: "/addaccount",
-                data: {
-                    realName: $("#realName").val(),
-                    idcardNo: $("#idcardNo").val(),
-                    loginName: $("#loginName").val(),
-                    loginPasswd: $("#loginPasswd").val(),
+            if (idcard == "") {
+                $("#errorTip2 div").html("不能为空")
+            }
+            if (lname == "") {
+                $("#errorTip3 div").html("不能为空")
+            }
+            if (pwd == "") {
+                $("#errorTip4 div").html("不能为空")
+            }
+            if (repsw == "") {
+                $("#errorTip5 div").html("不能为空")
+            }
+            if (tel == "") {
+                $("#errorTip6 div").html("不能为空")
+            }
+            var gender = null
+            if ($("#female")[0].checked) {
+                gender = $("#female").val()
+            } else {
+                gender = $("#male").val()
+            }
+            if (name != "" && idcard != "" && lname != "" && pwd != "" && repsw != "" && tel != "") {
+                $.ajax({
+                    type: "post",
+                    url: "/addaccount",
+                    data: {
+                        realName: $("#realName").val(),
+                        idcardNo: $("#idcardNo").val(),
+                        loginName: $("#loginName").val(),
+                        loginPasswd: $("#loginPasswd").val(),
 //                    repeatPasswd: $("#repeatPasswd").val(),
-                    telephone: $("#telephone").val(),
+                        telephone: $("#telephone").val(),
 
-                    recommenderId:$("#recommenderId").val(),
+                        recommenderId: $("#recommenderId").val(),
 //                    birthdate:$("#birthdate").val(),
-                    email:$("#email").val(),
-                    occupation:$("#occupation").val(),
-                    gender:gender,
-                    mailaddress:$("#mailaddress").val(),
-                    zipcode:$("#zipcode").val(),
-                    qq:$("#qq").val()
-                },
-                success: function (result) {
-                    console.log(result)
-                    if (result.data == "保存成功"){
-                        $("#save_result_info").val("保存成功")
-                        window.location.href="/account"
+                        email: $("#email").val(),
+                        occupation: $("#occupation").val(),
+                        gender: gender,
+                        mailaddress: $("#mailaddress").val(),
+                        zipcode: $("#zipcode").val(),
+                        qq: $("#qq").val()
+                    },
+                    success: function (result) {
+                        console.log(result)
+                        if (result.data == "保存成功") {
+                            $("#save_result_info").val("保存成功")
+                            window.location.href = "/account"
+                        }
+                        if (result.data == "账户名已存在") {
+                            $("#save_result_info").val("保存失败，该身份证已经开通过账务账号！")
+                            showResult()
+                        }
                     }
-                    if (result.data == "账户名已存在"){
-                        $("#save_result_info").val("保存失败，该身份证已经开通过账务账号！")
-                        showResult()
-                    }
-                }
-            })
+                })
+            }
         }
-
         //显示生日
         function birth() {
             var idcard = $("#idcardNo").val()
-            var birthday = idcard.substring(6,10)+"-"+idcard.substring(10,12)+"-"+
-                    idcard.substring(12,14)
+            var birthday = idcard.substring(6, 10) + "-" + idcard.substring(10, 12) + "-" +
+                    idcard.substring(12, 14)
             $("#birthdate").val(birthday)
+        }
+
+
+        //验证姓名
+        function judgeName() {
+            var reg = /^[a-zA-Z\d\u2E80-\u9FFF]{0,20}$/;
+            var name = $("#realName").val();
+            reg.test(name);
+            if (!(reg.test(name))) {
+                $("#errorTip1 div").html("20长度的字母、数字和汉字的组合").show();
+            } else {
+                $("#errorTip1").hide();
+            }
+        }
+
+        //验证身份证号
+        function judgeIdCardNo() {
+            var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+            var idcard = $("#idcardNo").val();
+            if (!(reg.test(idcard))) {
+                $("#errorTip2 div").html("输入正确的身份证号");
+            } else {
+                $("#errorTip2").hide();
+                var birthday = idcard.substring(6, 10) + "-" + idcard.substring(10, 12) + "-" + idcard.substring(12, 14)
+                $("#birthdate").val(birthday)
+            }
+        }
+
+        //验证登录账号
+        function judgeLoginName() {
+            var reg = /^[a-zA-Z\d\u2E80-\u9FFF]{0,30}$/;
+            var name = $("#loginName").val();
+            alert(reg.test(name))
+            if (!(reg.test(name))) {
+                $("#errorTip3 div").html("30长度的字母数字和汉字的组合");
+            } else {
+                $("#errorTip3").hide();
+            }
+        }
+
+        //验证登录密码
+        function judgeLoginPasswd() {
+            var reg = /^[a-zA-Z\d\_\u2E80-\u9FFF]{0,30}$/;
+            var pwd = $("#loginPasswd").val();
+            if (!(reg.test(pwd))) {
+                $("#errorTip4 div").html("30长度以内的字母、数字和下划线的组合");
+            } else {
+                $("#errorTip4").hide();
+            }
+        }
+
+        //判断两次输入的密码是否相同
+        function comparePassword() {
+            var psw = $("#loginPasswd").val()
+            var repsw = $("#repeatPasswd").val()
+            var reg = /^[a-zA-Z\d\_\u2E80-\u9FFF]{0,30}$/;
+            if (!(reg.test(repsw))) {
+                $("#error1").html("30长度以内的字母、数字和下划线的组合");
+            } else {
+                if (psw != repsw) {
+                    $("#error1").html("两次密码必须相同")
+                } else {
+                    $("#errorTip5").hide();
+                }
+            }
+        }
+
+
+        //验证电话号码
+        function judgeTelephone() {
+            var reg = /^(13[0-9]|15[0|3|6|7|8|9]|18[8|9])\d{8}$/;
+            var tel = $("#telephone").val();
+            if (!(reg.test(tel))) {
+                $("#errorTip6 div").html("请输入正确的电话号码");
+            } else {
+                $("#errorTip6").hide();
+            }
+        }
+
+        //推荐人身份证号
+
+        function judgereIdCardNo() {
+            var reg = /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+            var idcard = $("#recommenderId").val();
+            if (!(reg.test(idcard))) {
+                $("#errorTip7 div").html("输入正确的身份证号");
+            } else {
+                $("#errorTip7").hide();
+            }
+        }
+
+        //验证邮箱
+        function judgeEMail() {
+            var reg = /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+            var emails = $("#email").val()
+            if (!(reg.test(emails))) {
+                $("#errorTip8 div").html("输入正确的邮箱");
+            } else {
+                $("#errorTip8").hide();
+            }
+
+        }
+
+        //验证通讯地址
+        function judgeMailAddress() {
+            var address = $("#mailaddress").val()
+            if (address.length > 50) {
+                $("#errorTip9 div").html("50长度以内")
+            } else {
+                $("#errorTip9").hide();
+            }
+        }
+
+        //验证邮编
+        function judgeZipCode() {
+            var reg = /^[1-9][0-9]{5}$/;
+            var zip = $("#zipcode").val()
+            if (!(reg.test(zip))) {
+                $("#errorTip10 div").html("6位数字")
+            } else {
+                $("#errorTip10").hide();
+            }
+        }
+
+        //验证qq号
+        function judgeQQ() {
+            var reg = /[1-9][0-9]{3,}/
+            var qq = $("#qq").val()
+            if (!(reg.test(zip))) {
+                $("#errorTip11 div").html("5~13位数字")
+            } else {
+                $("#errorTip11").hide();
+            }
         }
 
     </script>
@@ -117,39 +275,52 @@
         <!--必填项-->
         <div class="text_info clearfix"><span>姓名：</span></div>
         <div class="input_info">
-            <input type="text" id="realName" name="realName" value=""/>
+            <input type="text" id="realName" name="realName" placeholder="20长度的字母数字和汉字的组合" onchange="judgeName()"/>
+            <span id="errorTip1">
             <span class="required">*</span>
-            <div class="validate_msg_long">20长度以内的汉字、字母和数字的组合</div>
+            <div class="validate_msg_long"></div>
+            </span>
         </div>
         <div class="text_info clearfix"><span>身份证：</span></div>
         <div class="input_info">
-            <input type="text" id="idcardNo" onchange="birth()" name="idcardNo" value=""/>
+            <input type="text" id="idcardNo" placeholder="输入正确的身份证号" onchange="judgeIdCardNo()" name="idcardNo"
+                   value=""/>
+            <span id="errorTip2">
             <span class="required">*</span>
-            <div class="validate_msg_long">正确的身份证号码格式</div>
+            <div class="validate_msg_long"></div>
+            </span>
         </div>
         <div class="text_info clearfix"><span>登录账号：</span></div>
         <div class="input_info">
-            <input type="text" id="loginName" name="loginName"/>
+            <input type="text" id="loginName" name="loginName" onchange="judgeLoginName()"/>
+            <span id="errorTip3">
             <span class="required">*</span>
-            <div class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
+            <div class="validate_msg_long"></div>
+            </span>
         </div>
         <div class="text_info clearfix"><span>密码：</span></div>
         <div class="input_info">
-            <input type="password" id="loginPasswd" name="loginPasswd"/>
+            <input type="password" id="loginPasswd" name="loginPasswd" onchange="judgeLoginPasswd()"/>
+            <span id="errorTip4">
             <span class="required">*</span>
-            <div class="validate_msg_long">30长度以内的字母、数字和下划线的组合</div>
+            <div class="validate_msg_long"></div>
+            </span>
         </div>
         <div class="text_info clearfix"><span>重复密码：</span></div>
         <div class="input_info">
-            <input type="password" id="repeatPasswd" name="repeatPasswd"/>
+            <input type="password" id="repeatPasswd" name="repeatPasswd" onchange="comparePassword()"/>
+            <span id="errorTip5">
             <span class="required">*</span>
-            <div class="validate_msg_long">两次密码必须相同</div>
+            <div id="error1" class="validate_msg_long"></div>
+            </span>
         </div>
         <div class="text_info clearfix"><span>电话：</span></div>
         <div class="input_info">
-            <input type="text" id="telephone" name="telephone" class="width200"/>
+            <input type="text" id="telephone" name="telephone" class="width200" onchange="judgeTelephone()"/>
+            <span id="errorTip6">
             <span class="required">*</span>
-            <div class="validate_msg_medium">正确的电话号码格式：手机或固话</div>
+            <div class="validate_msg_medium"></div>
+            </span>
         </div>
         <!--可选项-->
         <div class="text_info clearfix"><span>可选项：</span></div>
@@ -159,17 +330,23 @@
         <div id="optionalInfo" class="hide">
             <div class="text_info clearfix"><span>推荐人身份证号码：</span></div>
             <div class="input_info">
-                <input type="text" id="recommenderId"/>
-                <div class="validate_msg_long">正确的身份证号码格式</div>
+
+                <input type="text" id="recommenderId" onchange="judgereIdCardNo()"/>
+                <span id="errorTip7">
+                <div class="validate_msg_long"></div>
+                </span>
             </div>
             <div class="text_info clearfix"><span>生日：</span></div>
             <div class="input_info">
-                <input type="text" id="birthdate" name="birthdate" readonly class="readonly"/>
+                <input type="text" id="birthdate" placeholder="由身份证号计算而来" name="birthdate" readonly class="readonly"/>
             </div>
             <div class="text_info clearfix"><span>Email：</span></div>
             <div class="input_info">
-                <input type="text" id="email" name="email" class="width350"/>
-                <div class="validate_msg_tiny">50长度以内，合法的 Email 格式</div>
+                <input type="text" id="email" placeholder="50长度以内，合法的Email格式" onchange="judgeEMail()" name="email"
+                       class="width350"/>
+                <span id="errorTip8">
+                <div class="validate_msg_tiny"></div>
+                </span>
             </div>
             <div class="text_info clearfix"><span>职业：</span></div>
             <div class="input_info">
@@ -189,18 +366,24 @@
             </div>
             <div class="text_info clearfix"><span>通信地址：</span></div>
             <div class="input_info">
-                <input type="text" id="mailaddress" name="mailaddress" class="width350"/>
-                <div class="validate_msg_tiny">50长度以内</div>
+                <input type="text" id="mailaddress" onchange="judgeMailAddress()" name="mailaddress" class="width350"/>
+                <span id="errorTip9">
+                   <div class="validate_msg_tiny"></div>
+               </span>
             </div>
             <div class="text_info clearfix"><span>邮编：</span></div>
             <div class="input_info">
-                <input type="text" id="zipcode" name="zipcode"/>
-                <div class="validate_msg_long">6位数字</div>
+                <input type="text" id="zipcode" name="zipcode" onchange="judgeZipCode()"/>
+                <span id="errorTip10">
+                <div class="validate_msg_long"></div>
+                </span>
             </div>
             <div class="text_info clearfix"><span>QQ：</span></div>
             <div class="input_info">
-                <input type="text" id="qq" name="qq"/>
-                <div class="validate_msg_long">5到13位数字</div>
+                <input type="text" id="qq" name="qq" onchange="judgeQQ()"/>
+                <span id="errorTip11">
+                <div class="validate_msg_long"></div>
+                </span>
             </div>
         </div>
         <!--操作按钮-->
